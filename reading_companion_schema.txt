@@ -1,0 +1,65 @@
+BOOKS
+-
+id int PK FK >- BOOK_REVIEW.book_id
+title str
+author_id int FK >- AUTHOR.id
+description str
+categories str
+release date
+pg_count str
+image str
+isbn int
+
+USER
+-
+id int pk FK >- BOOK_REVIEW.user_id
+username str unique
+first_name str
+last_name str
+email str unique
+
+USER_LIBRARY
+-
+id int pk FK >- BOOK_CLUB_COMMENTS.user_id
+user_id int FK >- USER.id
+book_id int FK >- BOOKS.id
+
+AUTHOR
+-
+id int pk
+first_name str
+last_name str
+email str
+biography str
+
+AUTHOR_WORKS
+-
+id int pk
+author_id int FK >- AUTHOR.id
+book_id int FK >- BOOKS.id
+
+BOOK_CLUB(Forums)
+-
+id int pk FK >- BOOK_CLUB_COMMENTS.post_id
+user_id int FK >- USER_LIBRARY.id
+book_id int FK >- BOOKS.id
+discussion_title str unique
+discussion_post str
+discussion_date date
+
+BOOK_CLUB_COMMENTS
+-
+id int pk
+post_id int
+user_id int
+comment str
+comment_date date
+
+BOOK_REVIEW
+-
+id int pk
+user_id int
+book_id int
+review str
+rating int
+review_date date
