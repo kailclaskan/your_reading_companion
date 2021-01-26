@@ -1,10 +1,13 @@
 """Models for Your Reading Companion"""
 from enum import unique
+from sqlalchemy.sql.elements import True_
 
 from sqlalchemy.sql.operators import nullslast_op
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+
+from sqlalchemy.sql.schema import ForeignKey
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -136,6 +139,11 @@ class User(db.Model):
         db.Text,
         nullable=False
     )
+    role = db.Column(
+        db.Text,
+        nullable=False,
+        default="Standard"
+    )
 
     @classmethod
     def signup(cls, username, email, password, first_name, last_name):
@@ -165,3 +173,183 @@ class User(db.Model):
             
         return user
 
+class User_Library(db.Model):
+    """The database to track a users library."""
+    __tablename__ = 'user_libraries'
+
+    id = db.Column(
+        db.Integer,
+        db.ForeignKey('book_club_comments.user_id', ondelete='cascacade'),
+        primary_key=True,
+        autoincrement=True
+    )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='cascade')
+    )
+    book_id = db.Column(
+        db.Integer,
+        db.ForeignKey('books.id', ondelete='cascade')
+    )
+
+class Author_Work(db.Model):
+    """The database holds an authors published works."""
+    __tablename__ = 'author_works'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+    author_id = db.Column(
+        db.Integer,
+        db.ForeignKey('authors.id', ondelete='cascade')
+    )
+    book_id = db.Column(
+        db.Integer,
+        db.ForeignKey('books.id', ondelete='cascade')
+    )
+
+class Book_Club(db.Model):
+    """Adds a book club forum to discuss current reading material."""
+    __tablename__= 'book_clubs'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='cascade')
+    )
+    book_id = db.Column(
+        db.Integer,
+        db.ForeignKey('books.id', ondelete='cascade')
+    )
+    discussion_title = db.Column(
+        db.String(120),
+        nullable=False
+    )
+    discussion_body = db.Column(
+        db.Text,
+        nullable=False
+    )
+    discussion_posted_date = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow()
+    )
+    reviewed = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False
+    )
+
+    @classmethod
+    def post_forum(cls, discussion_title, discussion_body):
+        """Adds a forum to discuss interests in books."""
+        post = Book_Club(
+            discussion_title=discussion_title,
+            discussion_body=discussion_body
+        )
+
+        db.session.add(post)
+        return post
+
+class Book_Club_Comment(db.Model):
+    """Comments on the forum posts."""
+    __tablename__ = 'book_club_comments'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+    post_id = db.Column(
+        db.Integer,
+        db.ForeignKey('book_clubs.id', ondelete='cascade')
+    )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='cascade')
+    )
+    comment = db.Column(
+        db.Text,
+        nullable=False
+    )
+    comment_date = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow()
+    )
+    reviewed = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False
+    )
+
+    @classmethod
+    def add_comment(cls, comment):
+        """Adds a comment to a book club forum."""
+        comment = Book_Club_Comment(
+            comment=comment
+        )
+
+        db.session.add(comment)
+        return comment
+
+class Book_Review(db.Model):
+    """
+    Add a book review to a book.
+    Comments will not be allowed on the reviews.
+    """
+    __tablename__ = 'book_reviews'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='cascade')
+    )
+    book_id = db.Column(
+        db.Integer,
+        db.ForeignKey('books.id', ondelete='cascade')
+    )
+    rating = db.Column(
+        db.Integer,
+        nullable=False
+    )
+    review = db.Column(
+        db.Text,
+        nullable=False
+    )
+    review_date = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow()
+    )
+    reviewed = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False
+    )
+
+    @classmethod
+    def add_review(cls, rating, review):
+        """Adds a review to a book."""
+        review = Book_Review(
+            rating=rating,
+            review=review
+        )
+
+        db.session.add(review)
+        return review
+
+def connect_db(app):
+    """Connects Flask app to database."""
+    db.app = app
+    db.init_app(app)

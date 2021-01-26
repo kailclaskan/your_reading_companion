@@ -1,3 +1,34 @@
+==================================================================================================================
+
+BOOKS
+-
+id int PK FK >- BOOK_REVIEW.book_id
+title str
+author_id int FK >- AUTHOR.id
+description str
+categories str
+release date
+pg_count str
+image str
+isbn int
+
+AUTHOR
+-
+id int pk
+first_name str
+last_name str
+email str
+biography str
+
+USER
+-
+id int pk FK >- BOOK_REVIEW.user_id
+username str unique
+first_name str
+last_name str
+email str unique
+role str
+ 
 USER_LIBRARY
 -
 id int pk FK >- BOOK_CLUB_COMMENTS.user_id
@@ -35,34 +66,3 @@ book_id int
 review str
 rating int
 review_date date
-
-==================================================================================================================
-
-BOOKS
--
-id int PK FK >- BOOK_REVIEW.book_id
-title str
-author_id int FK >- AUTHOR.id
-description str
-categories str
-release date
-pg_count str
-image str
-isbn int
-
-AUTHOR
--
-id int pk
-first_name str
-last_name str
-email str
-biography str
-
-USER
--
-id int pk FK >- BOOK_REVIEW.user_id
-username str unique
-first_name str
-last_name str
-email str unique
- 
