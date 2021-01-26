@@ -1,13 +1,9 @@
 """Models for Your Reading Companion"""
-from enum import unique
-from sqlalchemy.sql.elements import True_
-
 from sqlalchemy.sql.operators import nullslast_op
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-from sqlalchemy.sql.schema import ForeignKey
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
