@@ -1,2 +1,167 @@
 """Models for Your Reading Companion"""
+from enum import unique
+
+from sqlalchemy.sql.operators import nullslast_op
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
+bcrypt = Bcrypt()
+db = SQLAlchemy()
+
+class Book(db.Model):
+    """The book class for the database."""
+
+    __tablename__ = 'books'
+
+    id = db.Column(
+        db.Integer,
+        db.ForeignKey('book_reviews.book_id', ondelete="cascade"),
+        primary_key=True,
+        autoincrement=True
+    )
+    title = db.Column(
+        db.Text,
+        nullable=False,
+        unique=True
+    )
+    author_id = db.Column(
+        db.Integer,
+        db.ForeignKey('authors.id'),
+        nullable=False
+    )
+    description = db.Column(
+        db.Text
+    )
+    categories = db.Column(
+        db.Text
+    )
+    release = db.Column(
+        db.Text
+    )
+    pg_count = db.Column(
+        db.Integer
+    )
+    image = db.Column(
+        db.Text
+    )
+    isbn = db.Column(
+        db.Integer
+    )
+    author = db.Relationship('Author')
+
+    @classmethod
+    def add_book(cls, title, author_first_name, author_last_name, description, categories, release, pg_count, image, isbn):
+        """Adds a book to the database."""
+        author_id = Author.query.filter_by(author_first_name=author_first_name, author_last_name=author_last_name)
+        book = Book(
+            title=title,
+            author_id=author_id.id,
+            description=description,
+            categories=categories,
+            release=release,
+            pg_count=pg_count,
+            image=image,
+            isbn=isbn
+        )
+
+        db.session.add(book)
+        return book
+    
+class Author(db.Model):
+    """The author class defines the author database."""
+    
+    __tablename__ = 'authors'
+    
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+    author_first_name = db.Column(
+        db.Text,
+        nullable=False,
+    )
+    author_last_name = db.Column(
+        db.Text,
+        nullable=False
+    )
+    email = db.Column(
+        db.Text
+    )
+    biography = db.Column(
+        db.Text
+    )
+
+    @classmethod
+    def add_author(cls, author_first_name, author_last_name):
+        """Adds an author to the database."""
+        author = Author(
+            author_first_name=author_first_name,
+            author_last_name=author_last_name
+        )
+
+        db.session.add(author)
+        return author
+
+class User(db.Model):
+    """The user class defines the user database."""
+
+    __tablename__ = 'users'
+
+    id = db.Column(
+        db.Integer,
+        db.ForeignKey('book_club_comments.user_id', ondelete='cascade'),
+        primary_key=True,
+        autoincrement=True
+    )
+    username = db.Column(
+        db.Text,
+        unique=True,
+        nullable=False
+    )
+    password = db.Column(
+        db.Text,
+        nullable=False
+    )
+    first_name = db.Column(
+        db.Text,
+        nullable=False
+    )
+    last_name = db.Column(
+        db.Text,
+        nullable=False
+    )
+    email = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    @classmethod
+    def signup(cls, username, email, password, first_name, last_name):
+        """Adds a user to the database."""
+        secure_password = bcrypt.generate_password_hash(password, bcrypt.gensalt()).decode('UTF-8')
+
+        user = User(
+            username=username,
+            email=email,
+            password=secure_password,
+            first_name=first_name,
+            last_name=last_name
+        )
+
+        db.session.add(user)
+        return user
+    
+    @classmethod
+    def authenticate(cls, username, password):
+        """Verify the user is who they say they are."""
+        user = cls.query.filter_by(username=username)
+
+        if user:
+            is_auth = bcrypt.check_password_hash(user.password, password)
+            if is_auth:
+                return user
+            
+        return user
+
