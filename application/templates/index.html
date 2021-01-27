@@ -4,7 +4,16 @@
     <div class="top">
         <h3>Top Books</h3>
         <div class='container' id='top_books'>
-
+            <!-- {% for result in results %}
+            <div class="container my-3">
+                <div class='row'>
+                    {{result.title}} by {{result.author}}
+                </div>
+                <div class='row'>
+                    {{result.description}}
+                </div>
+            </div>
+            {% endfor %} -->
         </div>
     </div>
     <div class="top">
@@ -13,7 +22,7 @@
 {% endblock %}
 {% block scripts %}
     <script src="../static/app.js"></script>
-    <script>
+    <!-- <script>
         getTop({{results|tojson}})
-    </script>
+    </script> -->
 {% endblock %}

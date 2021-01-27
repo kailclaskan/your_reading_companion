@@ -6,7 +6,7 @@ from flask import Flask, render_template, redirect, request, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, Book, Author, User, User_Library, Author_Work, Book_Club, Book_Club_Comment, Book_Review
-from secret import secret_key, nyt_api
+from terrible_secret import secret_key, nyt_api
 
 CURR_USER_KEY = 'curr_user'
 
