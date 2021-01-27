@@ -1,8 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}{% endblock %}
+{% block title %}Your Reading Companion{% endblock %}
 {% block content %}
+    <div class="top">
+        <h3>Top Books</h3>
+        <div class='container' id='top_books'>
 
+        </div>
+    </div>
+    <div class="top">
+        <h4>Current Forum Posts</h4>
+    </div>  
 {% endblock %}
 {% block scripts %}
-
+    <script src="../static/app.js"></script>
+    <script>
+        getTop({{results|tojson}})
+    </script>
 {% endblock %}

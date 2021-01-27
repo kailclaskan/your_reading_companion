@@ -1,1 +1,3 @@
 /venv
+application/secret.py
+/__pycache__

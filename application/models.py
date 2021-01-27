@@ -47,7 +47,6 @@ class Book(db.Model):
     isbn = db.Column(
         db.Integer
     )
-    author = db.Relationship('Author')
 
     @classmethod
     def add_book(cls, title, author_first_name, author_last_name, description, categories, release, pg_count, image, isbn):
@@ -175,7 +174,7 @@ class User_Library(db.Model):
 
     id = db.Column(
         db.Integer,
-        db.ForeignKey('book_club_comments.user_id', ondelete='cascacade'),
+        db.ForeignKey('book_club_comments.user_id', ondelete='cascade'),
         primary_key=True,
         autoincrement=True
     )
