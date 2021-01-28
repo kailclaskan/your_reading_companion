@@ -1,4 +1,5 @@
 """Models for Your Reading Companion"""
+from enum import unique
 from sqlalchemy.sql.operators import nullslast_op
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +18,7 @@ class Book(db.Model):
         db.Integer,
         db.ForeignKey('book_reviews.book_id', ondelete="cascade"),
         primary_key=True,
+        unique=True,
         autoincrement=True
     )
     title = db.Column(
@@ -42,29 +44,50 @@ class Book(db.Model):
         db.Integer
     )
     image = db.Column(
-        db.Text
+        db.Text,
+        default="https://p.kindpng.com/picc/s/494-4945860_cartoon-book-with-blank-cover-printable-blank-book.png"
     )
     isbn = db.Column(
         db.Integer
     )
 
     @classmethod
-    def add_book(cls, title, author_first_name, author_last_name, description, categories, release, pg_count, image, isbn):
+    def add_book(cls, title, description, author_last_name, author_first_name, categories, release, pg_count, image):
         """Adds a book to the database."""
-        author_id = Author.query.filter_by(author_first_name=author_first_name, author_last_name=author_last_name)
-        book = Book(
-            title=title,
-            author_id=author_id.id,
-            description=description,
-            categories=categories,
-            release=release,
-            pg_count=pg_count,
-            image=image,
-            isbn=isbn
-        )
+        author = Author.query.filter_by(author_last_name=author_last_name, author_first_name=author_first_name).first()
 
-        db.session.add(book)
-        return book
+        if author:
+            book = Book(
+                title=title,
+                description=description,
+                author_id = author.id,
+                categories=categories,
+                release=release,
+                pg_count=pg_count,
+                image=image
+            )
+
+            db.session.add(book)
+            return book
+        else:
+            Author.add_author(
+                author_first_name=author_first_name,
+                author_last_name=author_last_name
+            )
+            db.session.commit()
+            author = Author.query.filter_by(author_last_name=author_last_name, author_first_name=author_first_name).first()
+            book = Book(
+                title=title,
+                description=description,
+                author_id = author.id,
+                categories=categories,
+                release=release,
+                pg_count=pg_count,
+                image=image
+            )
+
+            db.session.add(book)
+            return book
     
 class Author(db.Model):
     """The author class defines the author database."""
@@ -78,7 +101,7 @@ class Author(db.Model):
     )
     author_first_name = db.Column(
         db.Text,
-        nullable=False,
+        nullable=False
     )
     author_last_name = db.Column(
         db.Text,
@@ -111,6 +134,7 @@ class User(db.Model):
         db.Integer,
         db.ForeignKey('book_club_comments.user_id', ondelete='cascade'),
         primary_key=True,
+        unique=True,
         autoincrement=True
     )
     username = db.Column(
@@ -137,13 +161,13 @@ class User(db.Model):
     role = db.Column(
         db.Text,
         nullable=False,
-        default="Standard"
+        default="standard_user"
     )
 
     @classmethod
     def signup(cls, username, email, password, first_name, last_name):
         """Adds a user to the database."""
-        secure_password = bcrypt.generate_password_hash(password, bcrypt.gensalt()).decode('UTF-8')
+        secure_password = bcrypt.generate_password_hash(password, 16).decode('UTF-8')
 
         user = User(
             username=username,
@@ -159,7 +183,7 @@ class User(db.Model):
     @classmethod
     def authenticate(cls, username, password):
         """Verify the user is who they say they are."""
-        user = cls.query.filter_by(username=username)
+        user = cls.query.filter_by(username=username).first()
 
         if user:
             is_auth = bcrypt.check_password_hash(user.password, password)
@@ -174,7 +198,6 @@ class User_Library(db.Model):
 
     id = db.Column(
         db.Integer,
-        db.ForeignKey('book_club_comments.user_id', ondelete='cascade'),
         primary_key=True,
         autoincrement=True
     )
@@ -212,6 +235,7 @@ class Book_Club(db.Model):
     id = db.Column(
         db.Integer,
         primary_key=True,
+        unique=True,
         autoincrement=True
     )
     user_id = db.Column(
@@ -259,7 +283,8 @@ class Book_Club_Comment(db.Model):
     id = db.Column(
         db.Integer,
         primary_key=True,
-        autoincrement=True
+        autoincrement=True,
+        unique=True
     )
     post_id = db.Column(
         db.Integer,

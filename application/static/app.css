@@ -5,3 +5,13 @@ body{
     text-align: center;
     margin: 1% auto;
 }
+#book_cover{
+    width: 25%;
+    height: auto;
+    margin: 10px auto;
+}
+#description{
+    text-indent: 3rem;
+    width: 75%;
+    margin: 0 auto;
+}

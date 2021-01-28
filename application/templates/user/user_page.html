@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}{{g.user.username}}'s Library{% endblock %}
+{% block content %}
+    <h3>{{g.user.username}} Details</h3>
+    <h4>Name:</h4>
+    <h5>{{g.user.first_name}} {{g.user.last_name}}</h5>
+    <h4>Email:</h4>
+    <h5>{{g.user.email}}</h5>
+    <h4>Role:</h4>
+    <h5>{{g.user.role}}</h5>
+    <div>
+        <h3>Library</h3>
+        {% if books %}
+            {% for book in books %}
+                <a href="/books/{{book.id}}">
+                    <div class="card col-3">
+                        <img src="{{book.img}}" alt="{{book.title}}" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="card-title">{{book.title}}</h5>
+                            <p class="card-text">{{book.description}}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}
+{% block scripts %}
+
+{% endblock %}

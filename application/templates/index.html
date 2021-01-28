@@ -4,16 +4,20 @@
     <div class="top">
         <h3>Top Books</h3>
         <div class='container' id='top_books'>
-            <!-- {% for result in results %}
-            <div class="container my-3">
-                <div class='row'>
-                    {{result.title}} by {{result.author}}
-                </div>
-                <div class='row'>
-                    {{result.description}}
-                </div>
+            <div class="row">
+                {% for result in results %}
+                    <div class="card col-2 my-1 mx-auto">
+                        <a href="/books/check/{{result[0]['volumeInfo']['title']}}">
+                            <img src="{{result[0]['volumeInfo']['imageLinks']['thumbnail']}}" 
+                                alt="{{result[0]['volumeInfo']['title']}}" 
+                                class="card-img-top">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{result[0]['volumeInfo']['title']}}</h5>
+                        </div>
+                    </div>
+            {% endfor %}
             </div>
-            {% endfor %} -->
         </div>
     </div>
     <div class="top">
@@ -22,7 +26,4 @@
 {% endblock %}
 {% block scripts %}
     <script src="../static/app.js"></script>
-    <!-- <script>
-        getTop({{results|tojson}})
-    </script> -->
 {% endblock %}

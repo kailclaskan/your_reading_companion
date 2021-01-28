@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}{{book.title}}{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row mx-auto">
+            <img src="{{book.image}}" alt="{{book.title}}" id="book_cover" class="img-fluid max-width: 25%">
+            <h3 class="text-center" id="title">{{book.title}}</h3>
+            <h4 class="text-center" id="author">{{author.author_first_name}} {{author.author_last_name}}</h4>
+            <div id="desc_para">
+                <p class="text-left" id="description">{{book.description}}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
