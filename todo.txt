@@ -1,0 +1,20 @@
+To Do:
+
+1. Create Model Relationship between book and author so I can reference both.
+
+2. If a book is in a users library replace that add to library button with a delete from library button.
+
+3. Handle the author name better. 
+	Maybe change the model so it's just Author name?
+	What about Multiple Authors?
+
+4. Add users book_club posts to user page.
+	For cleaner looking posts I think I'll put it like:
+		| Book img | Post Title | Post | Last Activity |
+				     COL Width	
+		|     2    |     3      |  5   |      2        |
+
+	Maybe change the way the books are listed to a similar pattern.
+		| Book Img | Book Title | Auth |  Description  | Delete |
+				     COL Width
+		|     2    |     3      |  2   |       4       |   1	|
