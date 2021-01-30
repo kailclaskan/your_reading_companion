@@ -21,3 +21,4 @@ Bugs:
 7. IF you view the book and then attempt to add it, it says it's already in your library, but it's not.
 
 8. If you remove all books from your library 1 remains in the DB, however it doesn't display on the users detail page.
+	ALSO you can't add them to your library again after you've removed them.
