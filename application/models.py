@@ -32,10 +32,12 @@ class Book(db.Model):
         nullable=False
     )
     description = db.Column(
-        db.Text
+        db.Text,
+        default='none'
     )
     categories = db.Column(
-        db.Text
+        db.Text,
+        default="Unknown"
     )
     release = db.Column(
         db.Text
@@ -52,7 +54,7 @@ class Book(db.Model):
     )
 
     @classmethod
-    def add_book(cls, title, description, author_last_name, author_first_name, categories, release, pg_count, image):
+    def add_book(cls, title, description, author_last_name, author_first_name, categories, release, image):
         """Adds a book to the database."""
         author = Author.query.filter_by(author_last_name=author_last_name, author_first_name=author_first_name).first()
 
@@ -63,7 +65,6 @@ class Book(db.Model):
                 author_id = author.id,
                 categories=categories,
                 release=release,
-                pg_count=pg_count,
                 image=image
             )
 
@@ -82,7 +83,6 @@ class Book(db.Model):
                 author_id = author.id,
                 categories=categories,
                 release=release,
-                pg_count=pg_count,
                 image=image
             )
 
@@ -210,6 +210,16 @@ class User_Library(db.Model):
         db.ForeignKey('books.id', ondelete='cascade')
     )
 
+    @classmethod
+    def add_to_library(cls, user_id, book_id):
+        """Adds user_id and book_id to the users library."""
+        book = User_Library(
+            user_id=user_id,
+            book_id=book_id
+        )
+
+        db.session.add(book)
+        return book
 class Author_Work(db.Model):
     """The database holds an authors published works."""
     __tablename__ = 'author_works'

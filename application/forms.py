@@ -28,6 +28,7 @@ class UserSignInForm(FlaskForm):
 class PostForm(FlaskForm):
     """Form to post a Review or Book Club Forum"""
     title = StringField('Title of Post', validators=[DataRequired(), Length(max=120)])
+    book = StringField('Book Title', validators=[DataRequired()])
     body = TextAreaField('Post', validators=[DataRequired()])
 
 class CommentForm(FlaskForm):
@@ -36,5 +37,5 @@ class CommentForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     """The form to search for a book."""
-    search = StringField('Search')
-    genre = SelectField('Genre')
+    search = StringField('Search by Title or Author')
+    genre = SelectField('Select Genre to Search by')

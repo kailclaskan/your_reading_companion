@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {% if form.search.widget.input_type != 'hidden' %}
+        <div class="container">
+            <div class="row">
+                <div class="col col-6 mx-auto">
+                    {{ form.search(placeholder=form.search.label.text, class="form-control my-2", id="search_bar")}}
+                </div>  
+            </div>
+        </div>
+        {% endif %}
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    <button class="btn btn-lg btn-success mt-3 mx-auto" id="search">Search</button>
+                </div>
+            </div>
+        </div>     
+    </form>
+    <div class='container' id='top_books'>
+        <div class="row" id='top_book_row'>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="/static/app.js"></script>
+{% endblock %}

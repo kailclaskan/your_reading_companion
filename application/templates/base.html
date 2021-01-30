@@ -15,7 +15,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
-                <a href="#" class="navbar-brand">Your Reading Companion</a>
+                <a href="/" class="navbar-brand">Your Reading Companion</a>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
                         <li class="nav-item">
@@ -42,7 +42,7 @@
                     </ul>
                     {% if g.user %}
                     <div class="nav-item">
-                        <h6 class="my-1"><a href="/users/{{g.user.id}}" class="nav-link text-secondary">{{g.user.username}}</a></h6>
+                        <h6 class="my-1"><a href="/users/{{g.user.id}}" class="nav-link text-secondary" id="user">{{g.user.username}}</a></h6>
                     </div>
                     {% endif%}
                 </div>
@@ -50,7 +50,7 @@
         </nav>
         <div class="container">
             {% for category, message in get_flashed_messages(with_categories=True) %}
-                <div class="alert alert-{{category}} bg-{{category}} text-light">{{message}}</div>
+                <div class="alert alert-{{category}} bg-{{category}} text-light" id="flashes">{{message}}</div>
             {% endfor %}
         </div>
         {% block content %} {% endblock %}
