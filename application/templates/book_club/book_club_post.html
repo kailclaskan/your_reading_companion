@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}{% endblock %}
+{% block title %}Create a Book Club{% endblock %}
 {% block content %}
-    <div class="container-fluid text-center">
+    <div class="container-fluid text-center" id="bookclub_post_form">
         <form method="POST">
             {{ form.hidden_tag() }}
 
@@ -13,10 +13,15 @@
                     {{ field(placeholder=field.label.text, class="form-group col-4 offset-4 my-2 self-align-center")}}
                 </div>
             {% endfor %}
-            <button class="btn btn-lg btn-secondary mt-3">Validate</button>
+            <button class="btn btn-lg btn-secondary mt-3" id="validate">Validate</button>
         </form>
+    </div>
+    <div class="container">
+        <div class="row" id="book_val">
+
+        </div>
     </div>
 {% endblock %}
 {% block scripts %}
-
+    <script src="/static/app.js"></script>
 {% endblock %}

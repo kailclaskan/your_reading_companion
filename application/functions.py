@@ -23,9 +23,30 @@ def add_book(title, info, author_name):
             image=info['imageLinks']['thumbnail']
         )
 
-def add_post():
+def add_post(booktitle, post_title, post_body):
     """Adds a post in the book club."""
-    
+    title = filter_word(booktitle)
+    book = Book.query.filter_by(title=title).first()
+    if not book:
+        #################################still need to fix the title issue. # seems to be the issue. Need to figure out how to escape the hashtag.
+        resp = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={title}')
+        details = resp.json().get('items', [])
+        info = details[0]['volumeInfo']
+        author_name=info['authors'][0]
+        title = info['title']
+        add_book(title, info, author_name)
+        db.session.commit()
+        book=Book.query.filter_by(title=title)
+    Book_Club.post_forum(
+        user_id=g.user.id,
+        book_id=book.id,
+        discussion_title=post_title,
+        discussion_body=post_body
+    )
+    db.session.commit()
+    flash("Your post will be reviewed and then released, or sent back for editing." "info")
+    return redirect(f'/books/{book.id}')
+
 def add_review(book_id):
     """Adds a review to a book."""
 

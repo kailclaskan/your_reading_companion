@@ -4,6 +4,7 @@ import requests
 
 from flask import Flask, render_template, redirect, request, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
+from requests.api import post
 from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 
@@ -163,11 +164,20 @@ def clubs():
     clubs = Book_Club.query.order_by(desc(Book_Club.discussion_posted_date)).limit(5).all()
     return render_template('book_club/book_club.html', clubs=clubs)
 
+@app.route('/bookclub/books/check/<booktitle>')
+def bookclub_post(booktitle):
+    """
+        Checks if the book is in the database, adds it if not.
+        Adds necessary information about the book club post to the database.
+    """
+    post_title = request.form.get('title')
+    print(post_title)
+    post_body = request.form.get('body')
+    print(post_body)
+    return add_post(booktitle, post_title, post_body)
+
 @app.route('/bookclub/post', methods=["GET","POST"])
-def post_to_club():
+def bookclub_post_form():
     """The form to make a post in regard to a book."""
     form = PostForm()
-    if form.validate_on_submit():
-        form.book.choices = [('A', 'A')]
-    else:
-        return render_template('book_club/book_club_post.html', form=form)
+    return render_template('book_club/book_club_post.html', form=form)

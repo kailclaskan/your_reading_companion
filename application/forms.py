@@ -26,7 +26,7 @@ class UserSignInForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
 
 class PostForm(FlaskForm):
-    """Form to post a Review or Book Club Forum"""
+    """Form to post to the Book Club Forum"""
     title = StringField('Title of Post', validators=[DataRequired(), Length(max=120)])
     book = StringField('Book Title', validators=[DataRequired()])
     body = TextAreaField('Post', validators=[DataRequired()])

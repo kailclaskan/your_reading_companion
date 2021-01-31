@@ -279,9 +279,11 @@ class Book_Club(db.Model):
     club = relationship("Book_Club_Comment", backref="book_clubs")
 
     @classmethod
-    def post_forum(cls, discussion_title, discussion_body):
+    def post_forum(cls, user_id, book_id, discussion_title, discussion_body):
         """Adds a forum to discuss interests in books."""
         post = Book_Club(
+            user_id=user_id,
+            book_id=book_id,
             discussion_title=discussion_title,
             discussion_body=discussion_body
         )
