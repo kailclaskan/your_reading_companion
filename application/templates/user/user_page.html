@@ -23,13 +23,14 @@
                                     <h5>{{book.title}}</h5>
                                 </div>
                                 <div class="col-1">
-                                    <h6>Author Name Goes Here</h6>
+                                    <h6>{{book.author.author_name}}</h6>
                                 </div>
                                 <div class="col-8">
                                     <p>{{book.description}}</p>
                                 </div>
                                 <div class="col-1">
-                                    <a href="/users/{{g.user.id}}/library/remove/{{book.id}}" class="btn btn-danger">Remove</a>
+                                    <a href="/books/{{book.id}}/add-review" class="btn btn-success my-1">Add Review</a>
+                                    <a href="/users/{{g.user.id}}/library/remove/{{book.id}}" class="btn btn-danger my-1">Remove</a>
                                 </div>
                             </div>
                         </div>

@@ -1,8 +1,32 @@
 {% extends 'base.html' %}
 {% block title %}{% endblock %}
 {% block content %}
-    <a href="/bookclub/post" class="btn btn-primary">Post</a>
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            <a href="/bookclub/post" class="btn btn-primary">Post</a>
+        </div>
+    </div>
+    {% if clubs %}
+    <div class="row">
+        <div class="col-4">
+            Bookcover
+            Book title
+            Author
+        </div>
+        <div class="col-4">
+            Club Title (A tag that takes you to the clubs page.)
+            Basically the reason for the club.
+        </div>
+        <div class="col-4">
+            Activity date (Last Activity Date)
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
 {% endblock %}
 {% block scripts %}
-
+    <script src="/static/app.js"></script>
 {% endblock %}

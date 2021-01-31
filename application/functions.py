@@ -6,32 +6,34 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from models import db, connect_db, Book, Author, User, User_Library, Author_Work, Book_Club, Book_Club_Comment, Book_Review
-from forms import UserSignupForm, UserSignInForm, PostForm, CommentForm, SearchForm
+from forms import UserSignupForm, UserSignInForm, PostForm, CommentForm, SearchForm, ReviewForm
 from terrible_secret import secret_key, nyt_api
 from genres import genres
 
 CURR_USER_KEY = 'curr_user'
 
-def add_book(title, info, first_name, last_name):
+def add_book(title, info, author_name):
     """Adds a book to the database."""
     Book.add_book(
             title=title,
             description=info['description'],
-            author_first_name=first_name,
-            author_last_name=last_name,
+            author_name = author_name,
             categories=info['categories'],
             release=info['publishedDate'],
             image=info['imageLinks']['thumbnail']
         )
 
 def add_post():
-    """"""
+    """Adds a post in the book club."""
+    
+def add_review(book_id):
+    """Adds a review to a book."""
 
-def add_to_user_library(user, book):
+def add_to_user_library(user_id, book_id):
     """Adds a book to the users library database."""
     User_Library.add_to_library(
-        user_id = user.id,
-        book_id = book.id
+        user_id = user_id,
+        book_id = book_id
     )
 
 def add_user():
@@ -58,7 +60,8 @@ def add_user():
         return render_template('user/signup.html', form=form)
 
 def check(book_title):
-    """ Checks if a book is in the system. IF it is it redirects to the books detail page.
+    """ 
+        Checks if a book is in the system. IF it is it redirects to the books detail page.
         IF it isn't it adds it, then redirects to the details page.
     """
     title = filter_word(book_title)
@@ -68,14 +71,9 @@ def check(book_title):
         resp = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={title}')
         details = resp.json().get('items', [])
         info = details[0]['volumeInfo']
-        author=info['authors'][0]
-        if len(author.split(" ")) > 2:
-            first_name, middle_name, last_name = author.split(" ")
-        else:
-            first_name, last_name = author.split(" ")
+        author_name=info['authors'][0]
         title = info['title']
-        
-        add_book(title, info, first_name, last_name)
+        add_book(title, info, author_name)
         db.session.commit()
         direct = Book.query.filter_by(title=title).first()
         return redirect(f'/books/{direct.id}')
@@ -107,12 +105,11 @@ def filter_word(word):
 def library_check(user_id, title):
     """Checks to see if the book is in the users library."""
     book = Book.query.filter_by(title=title).first()
-    user = User.query.get(user_id)
-
     if book:
-        in_library = User_Library.query.filter_by(user_id=user.id, book_id=book.id)
+        book_id = book.id
+        in_library = User_Library.query.filter_by(user_id=user_id, book_id=book_id).first()
         if not in_library:
-            add_to_user_library(user, book)
+            add_to_user_library(user_id, book_id)
             db.session.commit()
             flash("Book added to your library", "success")
             return redirect('/books')
@@ -124,18 +121,13 @@ def library_check(user_id, title):
         resp = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={title}')
         details = resp.json().get('items', [])
         info = details[0]['volumeInfo']
-        author=info['authors'][0]
-        #Find a better way to handle the author name.
-        if len(author.split(" ")) > 2:
-            first_name, middle_name, last_name = author.split(" ")
-        else:
-            first_name, last_name = author.split(" ")
-        
+        author_name=info['authors'][0]
         title = info['title']
-        add_book(title, info, first_name, last_name)
+        add_book(title, info, author_name)
         db.session.commit()
         book = Book.query.filter_by(title=title).first()
-        add_to_user_library(user, book)
+        book_id = book.id
+        add_to_user_library(user_id, book_id)
         db.session.commit()
         flash("Book added to your library", "success")
         return redirect('/books')

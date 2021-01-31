@@ -18,3 +18,11 @@ To Do:
 		| Book Img | Book Title | Auth |  Description  | Delete |
 				     COL Width
 		|     2    |     3      |  2   |       4       |   1	|
+
+5. Book Club
+	First when adding to book club the form needs to validate and list the selected books.
+		Book Title | Author
+		Each book title will be a radial field that allows you to select only one.
+
+	Second when book is selected the user will push the submit button that will appear and it will post to the Book_Club DB.
+	 

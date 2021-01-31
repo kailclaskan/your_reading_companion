@@ -4,10 +4,11 @@ import requests
 
 from flask import Flask, render_template, redirect, request, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
+from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 
 from models import db, connect_db, Book, Author, User, User_Library, Author_Work, Book_Club, Book_Club_Comment, Book_Review
-from forms import UserSignupForm, UserSignInForm, PostForm, CommentForm, SearchForm
+from forms import UserSignupForm, UserSignInForm, PostForm, CommentForm, SearchForm, ReviewForm
 from terrible_secret import secret_key, nyt_api
 from genres import genres
 from functions import CURR_USER_KEY, check, add_user, add_post, library_check, load_top_20, do_logout, sign_in, library_check
@@ -114,9 +115,13 @@ def books_home():
 @app.route('/books/<int:book_id>')
 def book_info(book_id):
     """This loads info of the selected book."""
+    reviews = []
     book = Book.query.get_or_404(book_id)
     author = Author.query.get_or_404(book.author_id)
-    return render_template('book/details.html', book=book, author=author)
+    rev = Book_Review.query.filter_by(book_id=book_id, reviewed=True)
+    for review in rev:
+        reviews.append(review)
+    return render_template('book/details.html', book=book, author=author, reviews=reviews)
 
 @app.route('/books/check/<book_title>')
 def check_book(book_title):
@@ -127,6 +132,25 @@ def check_book(book_title):
     """
     return check(book_title)
 
+@app.route('/books/<int:book_id>/add-review', methods=["GET", "POST"])
+def add_review(book_id):
+    """Adds a review to a book."""
+    form = ReviewForm()
+    book = Book.query.get_or_404(book_id)
+    if form.validate_on_submit():
+        user_review = Book_Review(
+            user_id=g.user.id,
+            book_id=book_id,
+            title=form.headline.data,
+            rating=form.rating.data,
+            review=form.review.data,    
+        )
+        db.session.add(user_review)
+        db.session.commit() 
+        return redirect(f'/books/{book_id}')
+    else:
+        return render_template("book/book_review.html", form=form, book=book)
+
 ########################################################################
 ###########################Club Related#################################
 ########################################################################
@@ -136,12 +160,14 @@ def clubs():
         The main page for the clubs.
         Will show the most recent activity.
     """
-    form = PostForm()
-    return render_template('book_club/book_club.html', form=form)
+    clubs = Book_Club.query.order_by(desc(Book_Club.discussion_posted_date)).limit(5).all()
+    return render_template('book_club/book_club.html', clubs=clubs)
 
-@app.route('/bookclub/post')
+@app.route('/bookclub/post', methods=["GET","POST"])
 def post_to_club():
     """The form to make a post in regard to a book."""
     form = PostForm()
-
-    return render_template('book_club/book_club_post.html', form=form)
+    if form.validate_on_submit():
+        form.book.choices = [('A', 'A')]
+    else:
+        return render_template('book_club/book_club_post.html', form=form)

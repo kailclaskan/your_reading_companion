@@ -31,6 +31,12 @@ class PostForm(FlaskForm):
     book = StringField('Book Title', validators=[DataRequired()])
     body = TextAreaField('Post', validators=[DataRequired()])
 
+class ReviewForm(FlaskForm):
+    """Form to post a Review or Book Club Forum"""
+    rating = SelectField('Rating out of 10', choices=[('1','1'), ('2','2'), ('3','3'),('4','4'), ('5','5'),('6','6'),('7','7'), ('8','8'), ('9','9'), ('10','10')])
+    headline = StringField('Title of Post', validators=[DataRequired(), Length(max=120)])
+    review = TextAreaField('Post', validators=[DataRequired()])
+
 class CommentForm(FlaskForm):
     """Form to post a comment."""
     body = TextAreaField('Comment', validators=[DataRequired()])

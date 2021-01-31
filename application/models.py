@@ -1,5 +1,6 @@
 """Models for Your Reading Companion"""
 from enum import unique
+from sqlalchemy.orm import relation, relationship
 from sqlalchemy.sql.operators import nullslast_op
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -16,7 +17,6 @@ class Book(db.Model):
 
     id = db.Column(
         db.Integer,
-        db.ForeignKey('book_reviews.book_id', ondelete="cascade"),
         primary_key=True,
         unique=True,
         autoincrement=True
@@ -53,10 +53,15 @@ class Book(db.Model):
         db.Integer
     )
 
+    library = relationship("User_Library", backref='books')
+    club = relationship("Book_Club", backref='books')
+    review = relationship("Book_Review", backref='books')
+    author = relationship("Author", backref='books')
+    
     @classmethod
-    def add_book(cls, title, description, author_last_name, author_first_name, categories, release, image):
+    def add_book(cls, title, description, author_name, categories, release, image):
         """Adds a book to the database."""
-        author = Author.query.filter_by(author_last_name=author_last_name, author_first_name=author_first_name).first()
+        author = Author.query.filter_by(author_name=author_name).first()
 
         if author:
             book = Book(
@@ -71,12 +76,9 @@ class Book(db.Model):
             db.session.add(book)
             return book
         else:
-            Author.add_author(
-                author_first_name=author_first_name,
-                author_last_name=author_last_name
-            )
+            Author.add_author(author_name=author_name)
             db.session.commit()
-            author = Author.query.filter_by(author_last_name=author_last_name, author_first_name=author_first_name).first()
+            author = Author.query.filter_by(author_name=author_name).first()
             book = Book(
                 title=title,
                 description=description,
@@ -99,11 +101,7 @@ class Author(db.Model):
         primary_key=True,
         autoincrement=True
     )
-    author_first_name = db.Column(
-        db.Text,
-        nullable=False
-    )
-    author_last_name = db.Column(
+    author_name = db.Column(
         db.Text,
         nullable=False
     )
@@ -113,13 +111,12 @@ class Author(db.Model):
     biography = db.Column(
         db.Text
     )
-
+    
     @classmethod
-    def add_author(cls, author_first_name, author_last_name):
+    def add_author(cls, author_name):
         """Adds an author to the database."""
         author = Author(
-            author_first_name=author_first_name,
-            author_last_name=author_last_name
+            author_name=author_name
         )
 
         db.session.add(author)
@@ -132,7 +129,6 @@ class User(db.Model):
 
     id = db.Column(
         db.Integer,
-        db.ForeignKey('book_club_comments.user_id', ondelete='cascade'),
         primary_key=True,
         unique=True,
         autoincrement=True
@@ -163,6 +159,11 @@ class User(db.Model):
         nullable=False,
         default="standard_user"
     )
+
+    library = relationship("User_Library", backref="users")
+    club = relationship("Book_Club", backref="users")
+    club_comment = relationship("Book_Club_Comment", backref="users")
+    review = relationship("Book_Review", backref="users")
 
     @classmethod
     def signup(cls, username, email, password, first_name, last_name):
@@ -209,7 +210,7 @@ class User_Library(db.Model):
         db.Integer,
         db.ForeignKey('books.id', ondelete='cascade')
     )
-
+    
     @classmethod
     def add_to_library(cls, user_id, book_id):
         """Adds user_id and book_id to the users library."""
@@ -274,6 +275,8 @@ class Book_Club(db.Model):
         nullable=False,
         default=False
     )
+
+    club = relationship("Book_Club_Comment", backref="book_clubs")
 
     @classmethod
     def post_forum(cls, discussion_title, discussion_body):
@@ -351,6 +354,10 @@ class Book_Review(db.Model):
     )
     rating = db.Column(
         db.Integer,
+        nullable=False
+    )
+    title = db.Column(
+        db.String(120),
         nullable=False
     )
     review = db.Column(

@@ -10,15 +10,7 @@ Bugs:
 	I pull the books from the NYT Api and then filter them through the google API so I can pull all the book covers.
 	Prior to pulling from google it loaded far faster.
 
-4. When attempting to view a books details the first time it says NoneType object has no attribute query.
-	The second time it's added to the system.
-
 5. IF there is no page count or category the system fails.
 	Need an if, else statement.
 
 6. Once in a while it finds the wrong title and tries to add that. Maybe cause I'm querying with .first()?
-
-7. IF you view the book and then attempt to add it, it says it's already in your library, but it's not.
-
-8. If you remove all books from your library 1 remains in the DB, however it doesn't display on the users detail page.
-	ALSO you can't add them to your library again after you've removed them.
