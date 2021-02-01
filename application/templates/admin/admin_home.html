@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Welcome {{g.user.username}}{% endblock %}
+{% block content %}
+    <h1 class="text-center">Welcome to your administration page {{g.user.username}}!</h1>
+    <div class="container mt-5">
+        <div class="row my-3 justify-content-center">
+            <a href="/admin_reviews" class="btn btn-outline-secondary col-3">Pending Book Reviews</a>
+        </div>
+        <div class="row my-3 justify-content-center">
+            <a href="/admin_club_requests" class="btn btn-outline-secondary col-3">Requested Clubs</a>
+        </div>
+        <div class="row my-3 justify-content-center">
+            <a href="/admin_club_comments" class="btn btn-outline-secondary col-3">Pending Club Comments</a>
+        </div>
+        <div class="row my-3 justify-content-center">
+            <a href="/admin_user_updates" class="btn btn-outline-secondary col-3">Account Settings</a>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+
+{% endblock %}

@@ -2,6 +2,7 @@
 {% block title %}Create a Book Club{% endblock %}
 {% block content %}
     <div class="container-fluid text-center" id="bookclub_post_form">
+        <h3>Create a club for {{book.title}}</h3>
         <form method="POST">
             {{ form.hidden_tag() }}
 
@@ -13,13 +14,16 @@
                     {{ field(placeholder=field.label.text, class="form-group col-4 offset-4 my-2 self-align-center")}}
                 </div>
             {% endfor %}
-            <button class="btn btn-lg btn-secondary mt-3" id="validate">Validate</button>
-        </form>
-    </div>
-    <div class="container">
-        <div class="row" id="book_val">
+            <button class="btn btn-lg btn-secondary mt-3">Submit</button>
+            <div class="container">
+                <div class="row" id="message">
 
-        </div>
+                </div>
+                <div class="row" id="book_val">
+        
+                </div>
+            </div>
+        </form>
     </div>
 {% endblock %}
 {% block scripts %}

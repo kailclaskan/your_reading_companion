@@ -22,7 +22,7 @@
                 <a href="/books/{{book.id}}/add-review" class="btn btn-success my-2">Write a review</a>
             </div>
             <div class="col-3">
-                <a href="" class="btn btn-info my-2">Create a club</a>
+                <a href="/bookclub/{{book.id}}/post" class="btn btn-info my-2">Create a club</a>
             </div>
         </div>
     </div>
@@ -59,6 +59,30 @@
                     </div>
                     <div class="col-4">
                         <p>{{review.review_date}}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if clubs %}
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-2">
+                    <h5>Club Title</h5>
+                </div>
+                <div class="col-2">
+                    <h5>Last Activity</h5>
+                </div>
+            </div>
+        </div>
+        {% for club in clubs %}
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col-2">
+                        <h5>{{club.discussion_title}}</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>{{club.discussion_posted_date}}</h5>
                     </div>
                 </div>
             </div>

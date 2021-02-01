@@ -2,28 +2,23 @@
 {% block title %}{% endblock %}
 {% block content %}
 <div class="container">
-    <div class="row">
-        <div class="col-2">
-            <a href="/bookclub/post" class="btn btn-primary">Post</a>
-        </div>
+    <div class="row border border-dark p-2">
+        {% for club in clubs %}
+            {% if club.reviewed %}    
+                <div class="row">
+                    <div class="col-4">
+                        Image
+                    </div>
+                    <div class="col-4">
+                        {{club.discussion_title}}
+                    </div>
+                    <div class="col-4">
+                        {{club.discussion_posted_date}}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
     </div>
-    {% if clubs %}
-    <div class="row">
-        <div class="col-4">
-            Bookcover
-            Book title
-            Author
-        </div>
-        <div class="col-4">
-            Club Title (A tag that takes you to the clubs page.)
-            Basically the reason for the club.
-        </div>
-        <div class="col-4">
-            Activity date (Last Activity Date)
-        </div>
-    </div>
-    {% endif %}
-</div>
 
 
 {% endblock %}

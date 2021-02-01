@@ -37,7 +37,7 @@ async function validate_book(book_title){
     for(let point in data){
         title = data[point]['volumeInfo']['title'];
         author = data[point]['volumeInfo']['authors'];
-        image = data[point]['volumeInfo']['imageLinks']['smallThumbnail'];
+        image = data[point]['volumeInfo']['imageLinks']['thumbnail'];
         book_selector = `
             <div class="col-2 my-2">
                 <div class="row">
@@ -48,9 +48,6 @@ async function validate_book(book_title){
                 </div>
                 <div class="row text-center">
                     <h6>${author}</h6>
-                </div>
-                <div class="row mx-auto">
-                    <a href="books/check/${title}" class="btn btn-success">Submit</a>
                 </div>
             </div>`;
         $book_val.append(book_selector);
@@ -65,7 +62,7 @@ function book_search(e){
 function book_validate(e){
     e.preventDefault();
     $("#validate").remove();
-    $("#bookclub_post_form").append("<h4>Please select the correct book below.</h4>")
+    $("#message").append("<h4>Please select the correct book below.</h4>")
     $book = $("#book").val();
     validate_book($book);
 }

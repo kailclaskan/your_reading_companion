@@ -37,15 +37,24 @@ def add_post(booktitle, post_title, post_body):
         add_book(title, info, author_name)
         db.session.commit()
         book=Book.query.filter_by(title=title)
+        add_to_club(g.user.id, book.id, post_title, post_body)
+        db.session.commit()
+        flash("Your post will be reviewed and then released, or sent back for editing.", "info")
+        return redirect(f'/books/{book.id}')
+    else:
+        add_to_club(g.user.id, book.id, post_title, post_body)
+        db.session.commit()
+        flash("Your post will be reviewed and then released, or sent back for editing.", "info")
+        return redirect(f'/books/{book.id}')
+
+def add_to_club(user_id, book_id, post_title, post_body):
+    """Adds a user to the book_club"""
     Book_Club.post_forum(
-        user_id=g.user.id,
-        book_id=book.id,
-        discussion_title=post_title,
-        discussion_body=post_body
-    )
-    db.session.commit()
-    flash("Your post will be reviewed and then released, or sent back for editing." "info")
-    return redirect(f'/books/{book.id}')
+            user_id=user_id,
+            book_id=book_id,
+            discussion_title=post_title,
+            discussion_body=post_body
+        )
 
 def add_review(book_id):
     """Adds a review to a book."""

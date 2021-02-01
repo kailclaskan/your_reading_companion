@@ -117,12 +117,16 @@ def books_home():
 def book_info(book_id):
     """This loads info of the selected book."""
     reviews = []
+    clubs = []
     book = Book.query.get_or_404(book_id)
     author = Author.query.get_or_404(book.author_id)
     rev = Book_Review.query.filter_by(book_id=book_id, reviewed=True)
+    clu = Book_Club.query.filter_by(book_id=book_id, reviewed=True)
     for review in rev:
         reviews.append(review)
-    return render_template('book/details.html', book=book, author=author, reviews=reviews)
+    for club in clu:
+        clubs.append(club)
+    return render_template('book/details.html', book=book, author=author, reviews=reviews, clubs=clubs)
 
 @app.route('/books/check/<book_title>')
 def check_book(book_title):
@@ -164,20 +168,40 @@ def clubs():
     clubs = Book_Club.query.order_by(desc(Book_Club.discussion_posted_date)).limit(5).all()
     return render_template('book_club/book_club.html', clubs=clubs)
 
-@app.route('/bookclub/books/check/<booktitle>')
-def bookclub_post(booktitle):
-    """
-        Checks if the book is in the database, adds it if not.
-        Adds necessary information about the book club post to the database.
-    """
-    post_title = request.form.get('title')
-    print(post_title)
-    post_body = request.form.get('body')
-    print(post_body)
-    return add_post(booktitle, post_title, post_body)
-
-@app.route('/bookclub/post', methods=["GET","POST"])
-def bookclub_post_form():
+@app.route('/bookclub/<int:book_id>/post', methods=["GET","POST"])
+def bookclub_post_form(book_id):
     """The form to make a post in regard to a book."""
     form = PostForm()
-    return render_template('book_club/book_club_post.html', form=form)
+    book = Book.query.get_or_404(book_id)
+    booktitle = book.title
+    if form.validate_on_submit():
+        post_title = form.title.data
+        post_body = form.body.data
+        return add_post(booktitle, post_title, post_body)
+    else:
+        return render_template('book_club/book_club_post.html', form=form, book=book)
+
+########################################################################
+##########################Admin Related#################################
+########################################################################
+
+@app.route('/admin')
+def admin_home():
+    """Directs and admin level user to the administrative tools."""
+    return render_template('admin/admin_home.html')
+
+@app.route('/admin/admin_reviews')
+def admin_reviews():
+    """Allows an admin user to approve or deny reviews."""
+
+@app.route('/admin/admin_club_comments')
+def admin_club_comments():
+    """Allows an admin user to approve or deny club comments."""
+
+@app.route('/admin/admin_club_requests')
+def admin_club_requests():
+    """Allows an admin user to approve or deny new clubs."""
+
+@app.route('/admin/admin_user_updates')
+def admin_user_updates():
+    """Allows an admin user to reset passwords for users, remove users, and update user data."""

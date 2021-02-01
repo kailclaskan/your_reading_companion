@@ -28,7 +28,6 @@ class UserSignInForm(FlaskForm):
 class PostForm(FlaskForm):
     """Form to post to the Book Club Forum"""
     title = StringField('Title of Post', validators=[DataRequired(), Length(max=120)])
-    book = StringField('Book Title', validators=[DataRequired()])
     body = TextAreaField('Post', validators=[DataRequired()])
 
 class ReviewForm(FlaskForm):
