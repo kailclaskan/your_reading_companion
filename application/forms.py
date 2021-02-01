@@ -44,3 +44,8 @@ class SearchForm(FlaskForm):
     """The form to search for a book."""
     search = StringField('Search by Title or Author')
     genre = SelectField('Select Genre to Search by')
+
+class EditForm(FlaskForm):
+    """The form that is sent back to a user who needs to update their review/comment/post."""
+    title = StringField('Edit', validators=[DataRequired()])
+    body = StringField('Edit', validators=[DataRequired()])

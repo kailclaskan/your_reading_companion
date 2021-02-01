@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}
+    {% if reviews %}
+        Review Administration
+    {% elif clubs %}
+        Club Request Administration
+    {% elif comments %}
+        Club Comment Administration
+    {% elif users %}
+        Account Administration
+    {% else %}
+        Administration
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div class="container">
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="row border border-danger my-2 py-2">
+                <div class="col-1 align-self-center">
+                    {{review.user_id}}
+                </div>
+                <div class="col-2 align-self-center">
+                    {{review.title}}
+                </div>
+                <div class="col-4 align-self-center">
+                    {{review.review}}
+                </div>
+                <div class="col-1 align-self-center">
+                    <a href="/admin//admin_reviews/{{review.id}}/approved" class="btn btn-outline-success">Approve</a>
+                </div>
+                <div class="col-1 align-self-center">
+                    <a href="" class="btn btn-outline-danger">Deny</a>
+                </div>
+            </div>        
+            {% endfor %}
+        {% endif %}
+        {% if clubs %}
+            {% for club in clubs %}
+                <div class="row border border-danger my-2 py-2">
+                    <div class="col-1 align-self-center">
+                        {{club.user_id}}
+                    </div>
+                    <div class="col-2">
+                        {{club.book_id}}
+                    </div>
+                    <div class="col-2 align-self-center">
+                        {{club.discussion_title}}
+                    </div>
+                    <div class="col-4 align-self-center">
+                        {{club.discussion_body}}
+                    </div>
+                    <div class="col-1 align-self-center">
+                        <a href="/admin/admin_club_requests/{{club.id}}/approved" class="btn btn-outline-success">Approve</a>
+                    </div>
+                    <div class="col-1 align-self-center">
+                        <a href="" class="btn btn-outline-danger">Deny</a>
+                    </div>
+                </div> 
+            {% endfor %}
+        {% endif %}
+        {% if comments %}
+            {% for comment in comments %}
+                <div class="row border border-danger my-2 py-2">
+                    <div class="col-1 align-self-center">
+                        {{comment.post_id}}
+                    </div>
+                    <div class="col-2">
+                        {{comment.post_id}}
+                    </div>
+                    <div class="col-2 align-self-center">
+                        {{comment.comment}}
+                    </div>
+                    <div class="col-4 align-self-center">
+                        {{comment.comment_date}}
+                    </div>
+                    <div class="col-1 align-self-center">
+                        <a href="/admin/admin_club_comments/{{club.id}}/approved" class="btn btn-outline-success">Approve</a>
+                    </div>
+                    <div class="col-1 align-self-center">
+                        <a href="" class="btn btn-outline-danger">Deny</a>
+                    </div>
+                </div> 
+            {% endfor %}
+        {% endif %}
+        {% if users %}
+        
+        {% endif %}
+    </div>
+{% endblock %}
+{% block scripts %}
+
+{% endblock %}

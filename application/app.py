@@ -9,10 +9,10 @@ from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 
 from models import db, connect_db, Book, Author, User, User_Library, Author_Work, Book_Club, Book_Club_Comment, Book_Review
-from forms import UserSignupForm, UserSignInForm, PostForm, CommentForm, SearchForm, ReviewForm
+from forms import UserSignupForm, UserSignInForm, PostForm, CommentForm, SearchForm, ReviewForm, EditForm
 from terrible_secret import secret_key, nyt_api
 from genres import genres
-from functions import CURR_USER_KEY, check, add_user, add_post, library_check, load_top_20, do_logout, sign_in, library_check
+from functions import CURR_USER_KEY, check, add_user, add_post, library_check, load_top_20, do_logout, sign_in, library_check, approve, denied
 
 
 
@@ -188,20 +188,77 @@ def bookclub_post_form(book_id):
 @app.route('/admin')
 def admin_home():
     """Directs and admin level user to the administrative tools."""
-    return render_template('admin/admin_home.html')
+    all_reviews = Book_Review.query.filter_by(reviewed=False)
+    reviews = []
+    for review in all_reviews:
+        reviews.append(review)
+    all_requests = Book_Club.query.filter_by(reviewed=False)
+    requests = []
+    for request in all_requests:
+        requests.append(request)
+    comments = []
+    all_comments = Book_Club_Comment.query.filter_by(reviewed=False)
+    for comment in all_comments:
+        comments.append(comment)
+    num_reviews = len(reviews)
+    num_requests = len(requests)
+    num_comments = len(comments)
+    return render_template('admin/admin_home.html', num_reviews=num_reviews, num_requests=num_requests, num_comments=num_comments)
 
 @app.route('/admin/admin_reviews')
 def admin_reviews():
     """Allows an admin user to approve or deny reviews."""
+    reviews = []
+    admin_reviews = Book_Review.query.filter_by(reviewed=False)
+    for review in admin_reviews:
+        reviews.append(review)
+    return render_template('admin/admin.html', reviews=reviews)
+
+@app.route('/admin/admin_reviews/<int:request_id>/approved')
+def review_approve(request_id):
+    """Approves a user's requested change"""
+    approve(Book_Review, request_id)
+    return redirect('/admin')
+
+@app.route('/admin/<int:request_id>/denied')
+def admin_denied(request, request_id):
+    """Denies a user's requested change"""
 
 @app.route('/admin/admin_club_comments')
 def admin_club_comments():
     """Allows an admin user to approve or deny club comments."""
+    comments = []
+    admin_comments = Book_Club_Comment.query.filter_by(reviewed=False)
+    for comment in admin_comments:
+        comments.append(comment)
+    return render_template('admin/admin.html', comments=comments)
+
+@app.route('/admin/admin_club_comments/<int:request_id>/approved')
+def comment_approve(request_id):
+    """Approves a user's requested change"""
+    approve(Book_Club_Comment, request_id)
+    return redirect('/admin')
 
 @app.route('/admin/admin_club_requests')
 def admin_club_requests():
     """Allows an admin user to approve or deny new clubs."""
+    clubs = []
+    admin_clubs = Book_Club.query.filter_by(reviewed=False)
+    for club in admin_clubs:
+        clubs.append(club)
+    return render_template('admin/admin.html', clubs=clubs)
+
+@app.route('/admin/admin_club_requests/<int:request_id>/approved')
+def club_approve(request_id):
+    """Approves a user's requested change"""
+    approve(Book_Club, request_id)
+    return redirect('/admin')
 
 @app.route('/admin/admin_user_updates')
 def admin_user_updates():
     """Allows an admin user to reset passwords for users, remove users, and update user data."""
+    users = []
+    admin_users = User.query.all()
+    for user in admin_users:
+        users.append(user)
+    return render_template('admin/admin.html', users=users)

@@ -194,3 +194,17 @@ def sign_in():
             return render_template('user/signin.html', form=form)
     else:
         return render_template('user/signin.html', form=form)
+
+def approve(table, request_id):
+    """Approves a user's requested change"""
+    record = table.query.get_or_404(request_id)
+    record.reviewed = True
+    db.session.commit()
+    return redirect('/admin')
+
+def denied(table, request_id):
+    """Approves a user's requested change"""
+    record = table.query.get_or_404(request_id)
+    record.reviewed = True
+    db.session.commit()
+    return redirect('/admin')
