@@ -15,6 +15,7 @@
 {% block content %}
     <div class="container">
         {% if reviews %}
+            <h2 class="text-center my-2">Pending Book Reviews</h2>
             {% for review in reviews %}
             <div class="row border border-danger my-2 py-2">
                 <div class="col-1 align-self-center">
@@ -27,7 +28,7 @@
                     {{review.review}}
                 </div>
                 <div class="col-1 align-self-center">
-                    <a href="/admin//admin_reviews/{{review.id}}/approved" class="btn btn-outline-success">Approve</a>
+                    <a href="/admin/admin_reviews/{{review.id}}/approved" class="btn btn-outline-success">Approve</a>
                 </div>
                 <div class="col-1 align-self-center">
                     <a href="" class="btn btn-outline-danger">Deny</a>
@@ -36,6 +37,7 @@
             {% endfor %}
         {% endif %}
         {% if clubs %}
+            <h2 class="text-center my-2">Pending Book Clubs</h2>
             {% for club in clubs %}
                 <div class="row border border-danger my-2 py-2">
                     <div class="col-1 align-self-center">
@@ -60,13 +62,14 @@
             {% endfor %}
         {% endif %}
         {% if comments %}
+            <h2 class="text-center my-2">Pending Book Club Comments</h2>
             {% for comment in comments %}
                 <div class="row border border-danger my-2 py-2">
                     <div class="col-1 align-self-center">
                         {{comment.post_id}}
                     </div>
                     <div class="col-2">
-                        {{comment.post_id}}
+                        {{comment.user_id}}
                     </div>
                     <div class="col-2 align-self-center">
                         {{comment.comment}}
@@ -75,7 +78,7 @@
                         {{comment.comment_date}}
                     </div>
                     <div class="col-1 align-self-center">
-                        <a href="/admin/admin_club_comments/{{club.id}}/approved" class="btn btn-outline-success">Approve</a>
+                        <a href="/admin/admin_club_comments/{{comment.id}}/approved" class="btn btn-outline-success">Approve</a>
                     </div>
                     <div class="col-1 align-self-center">
                         <a href="" class="btn btn-outline-danger">Deny</a>
@@ -84,7 +87,66 @@
             {% endfor %}
         {% endif %}
         {% if users %}
-        
+            <h2 class="text-center my-2">User Account Settings</h2>
+            <div class="row my-2 py-2 text-center">
+                <div class="col-1 align-self-center">
+                    <p><strong>Username</strong></p>
+                </div>
+                <div class="col-1 align-self-center">
+                    <p><strong>First Name</strong></p>
+                </div>
+                <div class="col-1 align-self-center">
+                    <p><strong>Last Name</strong></p>
+                </div>
+                <div class="col-1 align-self-center">
+                    <p><strong>Email</strong></p>
+                </div>
+                <div class="col-5">
+                    <p><strong>Role</strong></p>
+                </div>
+                <div class="col-3">
+                    <p><strong>Controls</strong></p>
+                </div>
+            </div>
+            {% for user in users %}
+                <div class="row border border-secondary my-2 py-2 text-center">
+                    <div class="col-1 align-self-center">
+                        {{user.username}}
+                    </div>
+                    <div class="col-1 align-self-center">
+                        {{user.first_name}}
+                    </div>
+                    <div class="col-1 align-self-center">
+                        {{user.last_name}}
+                    </div>
+                    <div class="col-1 align-self-center">
+                        {{user.email}}
+                    </div>
+                    <div class="col-5 align-self-center">
+                        {{user.role}}
+                    </div>
+                    <div class="col-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="/admin/admin_user_updates/{{user.id}}/password_reset" class="btn btn-outline-success my-1">Reset Password</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="" class="btn btn-outline-info my-1">Update Role</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="" class="btn btn-outline-primary my-1">Update Info</a>
+                            </div>
+                            <div class="col-6">
+                                <a href="" class="btn btn-outline-danger my-1">Remove User</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% else %}
+            <h2 class="text-center my-2">No Administration Required</h2>
         {% endif %}
     </div>
 {% endblock %}

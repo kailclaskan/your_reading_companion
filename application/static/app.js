@@ -53,6 +53,12 @@ async function validate_book(book_title){
         $book_val.append(book_selector);
     }
 }
+function open_comment(e){
+    e.preventDefault();
+    $form = $("#comment-form")
+    $("#reply").addClass("disabled");
+    $form.removeClass("invisible");
+}
 function book_search(e){
     e.preventDefault();
     $search_term = $("#search_bar").val();
@@ -69,3 +75,5 @@ function book_validate(e){
 
 $('#search').on("click", book_search);
 $("#validate").on("click", book_validate);
+$("#reply").on("click", open_comment);
+$("#add-comment").on("click", add_comment)

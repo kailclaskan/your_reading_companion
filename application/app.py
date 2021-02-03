@@ -1,6 +1,7 @@
 """The 'Your Reading Companion' app."""
 import os
 import requests
+import urllib
 
 from flask import Flask, render_template, redirect, request, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
@@ -41,6 +42,10 @@ def add_user_to_g():
         g.user = User.query.get(session[CURR_USER_KEY])
     else:
         g.user = None
+
+@app.template_filter('urlencode')
+def url_encode(string):
+    return urllib.parse.quote_plus(string.encode('utf-8'))
         
 @app.route('/')
 def index():
@@ -106,9 +111,10 @@ def search_user(username):
 def books_home():
     """This loads the search criteria for finding books."""
     if g.user:
+        books = Book.query.all()
         form = SearchForm()
         form.genre.choices = [genre for genre in genres]
-        return render_template('book/all_books.html', form=form)
+        return render_template('book/all_books.html', form=form, books=books)
     else:
         flash("Must be logged in to view that page.", "warning")
         return redirect('/users/signin')
@@ -165,7 +171,7 @@ def clubs():
         The main page for the clubs.
         Will show the most recent activity.
     """
-    clubs = Book_Club.query.order_by(desc(Book_Club.discussion_posted_date)).limit(5).all()
+    clubs = Book_Club.query.order_by(desc(Book_Club.discussion_posted_date)).limit(10).all()
     return render_template('book_club/book_club.html', clubs=clubs)
 
 @app.route('/bookclub/<int:book_id>/post', methods=["GET","POST"])
@@ -180,6 +186,21 @@ def bookclub_post_form(book_id):
         return add_post(booktitle, post_title, post_body)
     else:
         return render_template('book_club/book_club_post.html', form=form, book=book)
+
+@app.route('/bookclub/<int:post_id>', methods=["GET", "POST"])
+def bookclub(post_id):
+    """The details page for the bookclub."""
+    form = CommentForm()
+    club = Book_Club.query.get_or_404(post_id)
+    comments = Book_Club_Comment.query.filter_by(post_id=post_id, reviewed=True).all()
+    if form.validate_on_submit():
+        comment = form.comment.data
+        Book_Club_Comment.add_comment(comment, post_id, g.user.id)
+
+        db.session.commit()
+        return redirect(f'/bookclub/{post_id}')
+    else:
+        return render_template("book_club/book_club_details.html", club=club, comments=comments, form=form)
 
 ########################################################################
 ##########################Admin Related#################################
@@ -218,7 +239,7 @@ def admin_reviews():
 def review_approve(request_id):
     """Approves a user's requested change"""
     approve(Book_Review, request_id)
-    return redirect('/admin')
+    return redirect('/admin/admin_reviews')
 
 @app.route('/admin/<int:request_id>/denied')
 def admin_denied(request, request_id):
@@ -237,7 +258,7 @@ def admin_club_comments():
 def comment_approve(request_id):
     """Approves a user's requested change"""
     approve(Book_Club_Comment, request_id)
-    return redirect('/admin')
+    return redirect('/admin/admin_club_comments')
 
 @app.route('/admin/admin_club_requests')
 def admin_club_requests():
@@ -252,7 +273,7 @@ def admin_club_requests():
 def club_approve(request_id):
     """Approves a user's requested change"""
     approve(Book_Club, request_id)
-    return redirect('/admin')
+    return redirect('/admin/admin_club_requests')
 
 @app.route('/admin/admin_user_updates')
 def admin_user_updates():

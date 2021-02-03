@@ -54,9 +54,9 @@ class Book(db.Model):
     )
 
     library = relationship("User_Library", backref='books')
-    club = relationship("Book_Club", backref='books')
-    review = relationship("Book_Review", backref='books')
-    author = relationship("Author", backref='books')
+    club = relationship("Book_Club", back_populates='book')
+    review = relationship("Book_Review", back_populates='book')
+    author = relationship("Author", back_populates='book')
     
     @classmethod
     def add_book(cls, title, description, author_name, categories, release, image):
@@ -112,6 +112,8 @@ class Author(db.Model):
         db.Text
     )
     
+    book = relationship("Book", back_populates="author")
+
     @classmethod
     def add_author(cls, author_name):
         """Adds an author to the database."""
@@ -161,9 +163,9 @@ class User(db.Model):
     )
 
     library = relationship("User_Library", backref="users")
-    club = relationship("Book_Club", backref="users")
-    club_comment = relationship("Book_Club_Comment", backref="users")
-    review = relationship("Book_Review", backref="users")
+    club = relationship("Book_Club", back_populates="user")
+    club_comment = relationship("Book_Club_Comment", back_populates="user")
+    review = relationship("Book_Review", back_populates="user")
 
     @classmethod
     def signup(cls, username, email, password, first_name, last_name):
@@ -276,7 +278,9 @@ class Book_Club(db.Model):
         default=False
     )
 
-    club = relationship("Book_Club_Comment", backref="book_clubs")
+    book = relationship("Book", back_populates="club")
+    user = relationship("User", back_populates="club")
+    comments = relationship("Book_Club_Comment", back_populates="club")
 
     @classmethod
     def post_forum(cls, user_id, book_id, discussion_title, discussion_body):
@@ -324,10 +328,15 @@ class Book_Club_Comment(db.Model):
         default=False
     )
 
+    user = relationship("User", back_populates="club_comment")
+    club = relationship("Book_Club", back_populates="comments")
+
     @classmethod
-    def add_comment(cls, comment):
+    def add_comment(cls, comment, post_id, user_id):
         """Adds a comment to a book club forum."""
         comment = Book_Club_Comment(
+            post_id=post_id,
+            user_id=user_id,
             comment=comment
         )
 
@@ -377,6 +386,9 @@ class Book_Review(db.Model):
         default=False
     )
 
+    book = relationship("Book", back_populates="review")
+    user = relationship("User", back_populates="review")
+    
     @classmethod
     def add_review(cls, rating, review):
         """Adds a review to a book."""

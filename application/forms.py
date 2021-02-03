@@ -38,7 +38,7 @@ class ReviewForm(FlaskForm):
 
 class CommentForm(FlaskForm):
     """Form to post a comment."""
-    body = TextAreaField('Comment', validators=[DataRequired()])
+    comment = TextAreaField('Comment', validators=[DataRequired()])
 
 class SearchForm(FlaskForm):
     """The form to search for a book."""

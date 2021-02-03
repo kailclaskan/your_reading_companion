@@ -1,5 +1,6 @@
 import os
 import requests
+import urllib
 
 from flask import Flask, render_template, redirect, request, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
@@ -16,7 +17,7 @@ def add_book(title, info, author_name):
     """Adds a book to the database."""
     Book.add_book(
             title=title,
-            description=info['description'],
+            description=info.get('description', " "),
             author_name = author_name,
             categories=info['categories'],
             release=info['publishedDate'],
@@ -94,13 +95,13 @@ def check(book_title):
         Checks if a book is in the system. IF it is it redirects to the books detail page.
         IF it isn't it adds it, then redirects to the details page.
     """
-    title = filter_word(book_title)
+    title = urllib.parse.unquote_plus(book_title)
     book = Book.query.filter_by(title=title).first()
     if not book:
         #################################still need to fix the title issue. # seems to be the issue. Need to figure out how to escape the hashtag.
         resp = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={title}')
         details = resp.json().get('items', [])
-        info = details[0]['volumeInfo']
+        info = details[0].get('volumeInfo', {})
         author_name=info['authors'][0]
         title = info['title']
         add_book(title, info, author_name)

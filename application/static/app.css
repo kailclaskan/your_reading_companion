@@ -19,3 +19,11 @@ body{
     width: 45%;
     margin-top: 15px;
 }
+.addreview{
+    background-color: darkslategray;
+    color: blanchedalmond;
+}
+.removefromlibrary{
+    background-color: firebrick;
+    color: blanchedalmond;
+}

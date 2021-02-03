@@ -7,7 +7,7 @@
             <div class="row">
                 {% for result in results %}
                     <div class="card col-2 my-1 mx-auto">
-                        <a href="/books/check/{{result[0]['volumeInfo']['title']}}">
+                        <a href="/books/check/{{result[0]['volumeInfo']['title'] | urlencode}}">
                             <img src="{{result[0]['volumeInfo']['imageLinks']['thumbnail']}}" 
                                 alt="{{result[0]['volumeInfo']['title']}}" 
                                 class="card-img-top bookcover">
