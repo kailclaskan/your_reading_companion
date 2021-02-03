@@ -1,28 +1,48 @@
 To Do:
 
-1. Create Model Relationship between book and author so I can reference both.
+1. Limit the number of books displayed on the books page. Maybe 10 per page.
 
-2. If a book is in a users library replace that add to library button with a delete from library button.
+2. Figure out the denied requests.
+	I want to send them back to the user who will click on a button and open a form to change the request.
+	They should also have the option to delete the request if they don't want to request any longer.
 
-3. Handle the author name better. 
-	Maybe change the model so it's just Author name?
-	What about Multiple Authors?
+3. Can now add/view books that start with a #, but still can't view books that start with a .
 
-4. Add users book_club posts to user page.
-	For cleaner looking posts I think I'll put it like:
-		| Book img | Post Title | Post | Last Activity |
-				     COL Width	
-		|     2    |     3      |  5   |      2        |
+4. Update the top books section.
+	EITHER:
+		Update the way things are done and instead pull from the database.
+			This means that instead of loading from the api, we're going to check, then add to the database.
+			May also need to add a date added to a new model that is only for the top books.
+	OR:
+		Update the books model so the most viewed books, or most popular club books are in the top books section.
+			This actually sounds a lot more fun. Like have it list the top x books based on views (Number of clicks) and club popularity (Number of comments) [x + y]
 
-	Maybe change the way the books are listed to a similar pattern.
-		| Book Img | Book Title | Auth |  Description  | Delete |
-				     COL Width
-		|     2    |     3      |  2   |       4       |   1	|
+5. List the books in a different way on the index.
+	Maybe:
+		#   |   Image   |   Title   |   Author
 
-5. Book Club
-	First when adding to book club the form needs to validate and list the selected books.
-		Book Title | Author
-		Each book title will be a radial field that allows you to select only one.
+6. Add the most popular book clubs to the bottom of the page.
+	Have to count the number of comments on the book to find the most popular.
 
-	Second when book is selected the user will push the submit button that will appear and it will post to the Book_Club DB.
-	 
+7. Adjust the posted date for all models with a date so it shows in format MM/DD/YYYY
+
+8. Set up the Password Reset, Role Update, Info Update and Remove User buttons in the User Account Settings menu.
+
+9. Make sure that the user can't write reviews, view clubs, or create clubs unless they're signed in.
+
+10. Change the book club comments to bubbles maybe? The post too possibly. Make it more exciting.
+	Comments need to be centered as well.
+
+11. Review written by test had Kail_Claskan as the user, need to fix that.
+	Shows up in database as written by test.
+
+12. Book Reviews need to be fully viewable on the books page.
+
+13. Make the User details on the user details page centered maybe? Just make it look nicer.
+	Center the Library section.
+	Add a created and commented clubs section.
+
+14. In line with the denials place an inbox in the navigation section.
+	Users can receive mail from administration, not send.
+	This is how the users can find out about their required updates.
+	Maybe add a messaging service for user to user contact.

@@ -1,16 +1,5 @@
 Bugs:
 
-1. Can't select books that begin with #
-	Also has trouble loading books that begin with . 
-
-2. Adding a book to your library refreshes the search page.
-	It should just add and flash, but not refresh in case a user wants to add more books from the same query.
-
 3. The Home Page takes FOREVER to load. I suspect it has something to do with the way I'm trying to load the books.
 	I pull the books from the NYT Api and then filter them through the google API so I can pull all the book covers.
 	Prior to pulling from google it loaded far faster.
-
-5. IF there is no page count or category the system fails.
-	Need an if, else statement.
-
-6. Once in a while it finds the wrong title and tries to add that. Maybe cause I'm querying with .first()?
