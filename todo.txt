@@ -1,14 +1,9 @@
 To Do:
 
-1. Limit the number of books displayed on the books page. Maybe 10 per page.
+---Home Page---
+A. Can now add/view books that start with a #, but still can't view books that start with a .
 
-2. Figure out the denied requests.
-	I want to send them back to the user who will click on a button and open a form to change the request.
-	They should also have the option to delete the request if they don't want to request any longer.
-
-3. Can now add/view books that start with a #, but still can't view books that start with a .
-
-4. Update the top books section.
+B. Update the top books section.
 	EITHER:
 		Update the way things are done and instead pull from the database.
 			This means that instead of loading from the api, we're going to check, then add to the database.
@@ -16,33 +11,73 @@ To Do:
 	OR:
 		Update the books model so the most viewed books, or most popular club books are in the top books section.
 			This actually sounds a lot more fun. Like have it list the top x books based on views (Number of clicks) and club popularity (Number of comments) [x + y]
+	The top books are NOT the top books on the New York Times Best Sellers Need to sort this out.
 
-5. List the books in a different way on the index.
+
+C. List the books in a different way on the index.
 	Maybe:
 		#   |   Image   |   Title   |   Author
 
-6. Add the most popular book clubs to the bottom of the page.
+D. Add the most popular book clubs to the bottom of the page.
 	Have to count the number of comments on the book to find the most popular.
 
-7. Adjust the posted date for all models with a date so it shows in format MM/DD/YYYY
+---Book Details---
+A. Review written by test had Kail_Claskan as the user, need to fix that.
+	Shows up in database as written by test.  
+	Was an issue with the way I was logging	the user. I had g.user.username. Changed 
+	it to review.user.username. Now it displays properly. ---DONE---
 
-8. Set up the Password Reset, Role Update, Info Update and Remove User buttons in the User Account Settings menu.
+B. Book Reviews need to be fully viewable on the books page. ---DONE---
+	  Date   | Title   |   User  |  Rating 
+	|                Review                |
+	Centered ---DONE---
 
-9. Make sure that the user can't write reviews, view clubs, or create clubs unless they're signed in.
+C. Need to add details about a book to it's details page. (Like interesting facts about the book, facts about the author)
 
-10. Change the book club comments to bubbles maybe? The post too possibly. Make it more exciting.
+D. Add flash message that Reviews will be reviewed and released, like club requests. ---Done---
+   	Also flash for comments. ---Done---
+
+E. Add js that allows you to open/close reviews and clubs on book detail pages.
+	ALSO add the ability to have created clubs/library on the User detail page.
+	Click link, it disables and allows you to click the other link.
+	Each link opens it's respective sections.
+
+F. Center the buttons on the details page. ---Done---
+
+---Book Club---
+A. Change the book club comments to bubbles maybe? The post too possibly. Make it more exciting.
 	Comments need to be centered as well.
 
-11. Review written by test had Kail_Claskan as the user, need to fix that.
-	Shows up in database as written by test.
+---All Books Page---
+A. Limit the number of books displayed on the books page. Maybe 10 per page. ---DONE---
+	1a. Now that that's done, need to code the ability to load the next set of 10, and the next set after that and so on.
+		Limit and Offset are set.
+		Need to figure out how to list the next sets.
 
-12. Book Reviews need to be fully viewable on the books page.
+---Admin Page---
+A. Figure out the denied requests.
+	I want to send them back to the user who will click on a button and open a form to change the request.
+	They should also have the option to delete the request if they don't want to request any longer.
+	In line with the denials place an inbox in the navigation section.
+		Users can receive mail from administration, not send.
+		This is how the users can find out about their required updates.
+		Maybe add a messaging service for user to user contact. (LATER)
 
-13. Make the User details on the user details page centered maybe? Just make it look nicer.
+B. Set up the Password Reset, Role Update, Info Update and Remove User buttons in the User Account Settings menu.
+
+
+---General---
+A. Adjust the posted date for all models with a date so it shows in format MM/DD/YYYY
+
+B. Make sure that the user can't write reviews, view clubs, or create clubs unless they're signed in.
+
+---User Details Page---
+A. Make the User details on the user details page centered maybe? Just make it look nicer.
 	Center the Library section.
 	Add a created and commented clubs section.
 
-14. In line with the denials place an inbox in the navigation section.
-	Users can receive mail from administration, not send.
-	This is how the users can find out about their required updates.
-	Maybe add a messaging service for user to user contact.
+
+
+
+
+
