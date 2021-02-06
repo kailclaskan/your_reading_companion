@@ -4,12 +4,12 @@ from sqlalchemy.orm import relation, relationship
 from sqlalchemy.sql.operators import nullslast_op
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import date
 
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
-
+d = date.today()
 class Book(db.Model):
     """The book class for the database."""
 
@@ -268,14 +268,9 @@ class Book_Club(db.Model):
         nullable=False
     )
     discussion_posted_date = db.Column(
-        db.DateTime,
+        db.String(10),
         nullable=False,
-        default=datetime.utcnow()
-    )
-    reviewed = db.Column(
-        db.Boolean,
-        nullable=False,
-        default=False
+        default=date.strftime(d, "%m/%d/%Y")
     )
 
     book = relationship("Book", back_populates="club")
@@ -318,14 +313,9 @@ class Book_Club_Comment(db.Model):
         nullable=False
     )
     comment_date = db.Column(
-        db.DateTime,
+        db.String(10),
         nullable=False,
-        default=datetime.utcnow()
-    )
-    reviewed = db.Column(
-        db.Boolean,
-        nullable=False,
-        default=False
+        default=date.strftime(d, "%m/%d/%Y")
     )
 
     user = relationship("User", back_populates="club_comment")
@@ -376,23 +366,21 @@ class Book_Review(db.Model):
         nullable=False
     )
     review_date = db.Column(
-        db.DateTime,
+        db.String(10),
         nullable=False,
-        default=datetime.utcnow()
-    )
-    reviewed = db.Column(
-        db.Boolean,
-        nullable=False,
-        default=False
+        default=date.strftime(d, "%m/%d/%Y")
     )
 
     book = relationship("Book", back_populates="review")
     user = relationship("User", back_populates="review")
     
     @classmethod
-    def add_review(cls, rating, review):
+    def add_review(cls, user_id, book_id, title, rating, review):
         """Adds a review to a book."""
         review = Book_Review(
+            user_id=user_id,
+            book_id=book_id,
+            title=title,
             rating=rating,
             review=review
         )

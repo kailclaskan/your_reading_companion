@@ -1,0 +1,4 @@
+{
+    "editor.minimap.enabled": false,
+    "python.pythonPath": "venv\\Scripts\\python.exe"
+}

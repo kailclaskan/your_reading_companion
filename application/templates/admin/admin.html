@@ -1,113 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}
-    {% if reviews %}
-        Review Administration
-    {% elif clubs %}
-        Club Request Administration
-    {% elif comments %}
-        Club Comment Administration
-    {% elif users %}
-        Account Administration
-    {% else %}
-        Administration
-    {% endif %}
-{% endblock %}
+{% block title %}Administration{% endblock %}
 {% block content %}
-    <div class="container">
-        {% if reviews %}
-            <h2 class="text-center my-2">Pending Book Reviews</h2>
-            {% for review in reviews %}
-            <div class="row border border-danger my-2 py-2">
-                <div class="col-1 align-self-center">
-                    {{review.user_id}}
-                </div>
-                <div class="col-2 align-self-center">
-                    {{review.title}}
-                </div>
-                <div class="col-4 align-self-center">
-                    {{review.review}}
-                </div>
-                <div class="col-1 align-self-center">
-                    <a href="/admin/admin_reviews/{{review.id}}/approved" class="btn btn-outline-success">Approve</a>
-                </div>
-                <div class="col-1 align-self-center">
-                    <a href="" class="btn btn-outline-danger">Deny</a>
-                </div>
-            </div>        
-            {% endfor %}
-        {% endif %}
-        {% if clubs %}
-            <h2 class="text-center my-2">Pending Book Clubs</h2>
-            {% for club in clubs %}
-                <div class="row border border-danger my-2 py-2">
-                    <div class="col-1 align-self-center">
-                        {{club.user_id}}
-                    </div>
-                    <div class="col-2">
-                        {{club.book_id}}
-                    </div>
-                    <div class="col-2 align-self-center">
-                        {{club.discussion_title}}
-                    </div>
-                    <div class="col-4 align-self-center">
-                        {{club.discussion_body}}
-                    </div>
-                    <div class="col-1 align-self-center">
-                        <a href="/admin/admin_club_requests/{{club.id}}/approved" class="btn btn-outline-success">Approve</a>
-                    </div>
-                    <div class="col-1 align-self-center">
-                        <a href="" class="btn btn-outline-danger">Deny</a>
-                    </div>
-                </div> 
-            {% endfor %}
-        {% endif %}
-        {% if comments %}
-            <h2 class="text-center my-2">Pending Book Club Comments</h2>
-            {% for comment in comments %}
-                <div class="row border border-danger my-2 py-2">
-                    <div class="col-1 align-self-center">
-                        {{comment.post_id}}
-                    </div>
-                    <div class="col-2">
-                        {{comment.user_id}}
-                    </div>
-                    <div class="col-2 align-self-center">
-                        {{comment.comment}}
-                    </div>
-                    <div class="col-4 align-self-center">
-                        {{comment.comment_date}}
-                    </div>
-                    <div class="col-1 align-self-center">
-                        <a href="/admin/admin_club_comments/{{comment.id}}/approved" class="btn btn-outline-success">Approve</a>
-                    </div>
-                    <div class="col-1 align-self-center">
-                        <a href="" class="btn btn-outline-danger">Deny</a>
-                    </div>
-                </div> 
-            {% endfor %}
-        {% endif %}
-        {% if users %}
-            <h2 class="text-center my-2">User Account Settings</h2>
-            <div class="row my-2 py-2 text-center">
-                <div class="col-1 align-self-center">
-                    <p><strong>Username</strong></p>
-                </div>
-                <div class="col-1 align-self-center">
-                    <p><strong>First Name</strong></p>
-                </div>
-                <div class="col-1 align-self-center">
-                    <p><strong>Last Name</strong></p>
-                </div>
-                <div class="col-1 align-self-center">
-                    <p><strong>Email</strong></p>
-                </div>
-                <div class="col-5">
-                    <p><strong>Role</strong></p>
-                </div>
-                <div class="col-3">
-                    <p><strong>Controls</strong></p>
-                </div>
-            </div>
+    {% if users %}
+        <div class="container">
             {% for user in users %}
                 <div class="row border border-secondary my-2 py-2 text-center">
                     <div class="col-1 align-self-center">
@@ -145,8 +40,6 @@
                     </div>
                 </div>
             {% endfor %}
-            {% else %}
-            <h2 class="text-center my-2">No Administration Required</h2>
         {% endif %}
     </div>
 {% endblock %}

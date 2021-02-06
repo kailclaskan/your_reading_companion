@@ -17,9 +17,14 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-11"></div>
+                <div class="col-10"></div>
                 <div class="col-1">
                     <p><a href="" class="nav-link text-right text-secondary" id="reply">reply</a></p>
+                </div>                
+                <div class="col-1">
+                    {% if club.user_id == g.user.id or g.user.role == 'admin' %}
+                    <a href="/bookclub/{{club.id}}/remove/" class="btn btn-danger">Remove</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -37,26 +42,31 @@
                 <button class="btn btn-lg btn-success mt-3">Submit</button>
         </div>
     </div>
-    <div class="container">
-        {% if comments %}
+        {% if comments %} 
             {% for comment in comments %}
-                <div class="row">
-                    <div class="col-2">
-                        <p>{{comment.comment}}</p>
+                <div class="container" id="{{comment.id}}">   
+                    <div class="row">
+                        <div class="col-2">
+                            <p>{{comment.comment}}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-8"></div>
-                    <div class="col-2">
-                        <p><strong>{{comment.user.username}}</strong></p>
-                    </div>
-                    <div class="col-2">
-                        <p>{{comment.comment_date}}</p>
+                    <div class="row">
+                        <div class="col-9"></div>
+                        <div class="col-1">
+                            <p><strong>{{comment.user.username}}</strong></p>
+                        </div>
+                        <div class="col-1">
+                            <p>{{comment.comment_date}}</p>
+                        </div>
+                        {% if club.user_id == g.user.id or g.user.role == 'admin' %}
+                        <div class="col-1">
+                            <a href="/bookclub/{{club.id}}/remove/{{comment.id}}" class="btn btn-danger">Remove</a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
         {% endif %}
-    </div>
 {% endblock %}
 {% block scripts %}
     <script src="/static/app.js"></script>

@@ -1,19 +1,16 @@
 """The 'Your Reading Companion' app."""
 import os
-import requests
 import urllib
 
-from flask import Flask, render_template, redirect, request, flash, session, g
+from flask import Flask, render_template, redirect, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
-from requests.api import post
 from sqlalchemy import desc
-from sqlalchemy.exc import IntegrityError
 
-from models import db, connect_db, Book, Author, User, User_Library, Author_Work, Book_Club, Book_Club_Comment, Book_Review
-from forms import UserSignupForm, UserSignInForm, PostForm, CommentForm, SearchForm, ReviewForm, EditForm
-from terrible_secret import secret_key, nyt_api
+from models import db, connect_db, Book, Author, User, User_Library, Book_Club, Book_Club_Comment, Book_Review
+from forms import PostForm, CommentForm, SearchForm, ReviewForm
+from terrible_secret import secret_key
 from genres import genres
-from functions import CURR_USER_KEY, check, add_user, add_post, library_check, load_top_20, do_logout, sign_in, library_check, approve, denied
+from functions import CURR_USER_KEY, check, add_user, add_post, library_check, load_top_20, do_logout, sign_in, library_check
 
 
 
@@ -50,8 +47,9 @@ def url_encode(string):
 @app.route('/')
 def index():
     """Redirects to the home page"""
-    results = load_top_20()
-    return render_template('index.html', results=results)
+    books = Book.query.all()
+    clubs = Book_Club.query.order_by(desc(Book_Club.discussion_posted_date)).limit(10).all()
+    return render_template('index.html', books=books, clubs=clubs)
 
 
 ########################################################################
@@ -77,12 +75,13 @@ def show_user_detail(user_id):
     """Shows the user's detail page."""
     #Need to create a relationship between book and author so I can pull author without too much stress.
     library = User_Library.query.filter_by(user_id=user_id)
+    reviews = Book_Review.query.filter_by(user_id=user_id)
     clubs = Book_Club.query.filter_by(user_id=user_id)
     books = []
     for book in library:
         book_q = Book.query.get(book.book_id)
         books.append(book_q)
-    return render_template('user/user_page.html', books=books, clubs=clubs)
+    return render_template('user/user_page.html', books=books, clubs=clubs, reviews=reviews)
 
 @app.route('/users/<int:user_id>/library/check/<title>')
 def add_to_users_library(user_id, title):
@@ -126,8 +125,8 @@ def book_info(book_id):
     clubs = []
     book = Book.query.get_or_404(book_id)
     author = Author.query.get_or_404(book.author_id)
-    rev = Book_Review.query.filter_by(book_id=book_id, reviewed=True)
-    clu = Book_Club.query.filter_by(book_id=book_id, reviewed=True)
+    rev = Book_Review.query.filter_by(book_id=book_id)
+    clu = Book_Club.query.filter_by(book_id=book_id)
     for review in rev:
         reviews.append(review)
     for club in clu:
@@ -146,21 +145,26 @@ def check_book(book_title):
 @app.route('/books/<int:book_id>/add-review', methods=["GET", "POST"])
 def add_review(book_id):
     """Adds a review to a book."""
-    form = ReviewForm()
-    book = Book.query.get_or_404(book_id)
-    if form.validate_on_submit():
-        user_review = Book_Review(
-            user_id=g.user.id,
-            book_id=book_id,
-            title=form.headline.data,
-            rating=form.rating.data,
-            review=form.review.data,    
-        )
-        db.session.add(user_review)
-        db.session.commit() 
-        return redirect(f'/books/{book_id}')
+    if g.user:
+        form = ReviewForm()
+        book = Book.query.get_or_404(book_id)
+        if form.validate_on_submit():
+            Book_Review.add_review(g.user.id, book_id, form.headline.data, form.rating.data, form.review.data)
+            db.session.commit() 
+            return redirect(f'/books/{book_id}')
+        else:
+            return render_template("book/book_review.html", form=form, book=book)
     else:
-        return render_template("book/book_review.html", form=form, book=book)
+        flash("Must be logged in to view that page.", "warning")
+        return redirect('/users/signin')
+
+@app.route('/books/<int:book_id>/remove/<int:review_id>')
+def remove_review(book_id, review_id):
+    """Removes a user comment from a book_club."""
+    review = Book_Review.query.get_or_404(review_id)
+    db.session.delete(review)
+    db.session.commit()
+    return redirect(f'/books/{book_id}')
 
 ########################################################################
 ###########################Club Related#################################
@@ -171,28 +175,36 @@ def clubs():
         The main page for the clubs.
         Will show the most recent activity.
     """
-    clubs = Book_Club.query.order_by(desc(Book_Club.discussion_posted_date)).limit(10).all()
-    return render_template('book_club/book_club.html', clubs=clubs)
+    if g.user:
+        clubs = Book_Club.query.order_by(desc(Book_Club.discussion_posted_date)).limit(10).all()
+        return render_template('book_club/book_club.html', clubs=clubs)
+    else:
+        flash("Must be logged in to view that page.", "warning")
+        return redirect('/users/signin')
 
 @app.route('/bookclub/<int:book_id>/post', methods=["GET","POST"])
 def bookclub_post_form(book_id):
     """The form to make a post in regard to a book."""
-    form = PostForm()
-    book = Book.query.get_or_404(book_id)
-    booktitle = book.title
-    if form.validate_on_submit():
-        post_title = form.title.data
-        post_body = form.body.data
-        return add_post(booktitle, post_title, post_body)
+    if g.user:
+        form = PostForm()
+        book = Book.query.get_or_404(book_id)
+        booktitle = book.title
+        if form.validate_on_submit():
+            post_title = form.title.data
+            post_body = form.body.data
+            return add_post(booktitle, post_title, post_body)
+        else:
+            return render_template('book_club/book_club_post.html', form=form, book=book)
     else:
-        return render_template('book_club/book_club_post.html', form=form, book=book)
-
+        flash("Must be logged in to view that page.", "warning")
+        return redirect('/users/signin')
+        
 @app.route('/bookclub/<int:post_id>', methods=["GET", "POST"])
 def bookclub(post_id):
     """The details page for the bookclub."""
     form = CommentForm()
     club = Book_Club.query.get_or_404(post_id)
-    comments = Book_Club_Comment.query.filter_by(post_id=post_id, reviewed=True).all()
+    comments = Book_Club_Comment.query.filter_by(post_id=post_id).all()
     if form.validate_on_submit():
         comment = form.comment.data
         Book_Club_Comment.add_comment(comment, post_id, g.user.id)
@@ -202,80 +214,31 @@ def bookclub(post_id):
     else:
         return render_template("book_club/book_club_details.html", club=club, comments=comments, form=form)
 
+@app.route('/bookclub/<int:post_id>/remove/')
+def remove_club(post_id):
+    """Removes a user comment from a book_club."""
+    club = Book_Club.query.get_or_404(post_id)
+    comments = club.comments
+    for comment in comments:
+        db.session.delete(comment)
+        db.session.commit()
+    db.session.delete(club)
+    db.session.commit()
+    return redirect(f'/bookclub')
+
+@app.route('/bookclub/<int:post_id>/remove/<int:comment_id>')
+def remove_comment(post_id, comment_id):
+    """Removes a user comment from a book_club."""
+    comment = Book_Club_Comment.query.get_or_404(comment_id)
+    db.session.delete(comment)
+    db.session.commit()
+    return redirect(f'/bookclub/{post_id}')
+
 ########################################################################
 ##########################Admin Related#################################
 ########################################################################
 
 @app.route('/admin')
-def admin_home():
-    """Directs and admin level user to the administrative tools."""
-    all_reviews = Book_Review.query.filter_by(reviewed=False)
-    reviews = []
-    for review in all_reviews:
-        reviews.append(review)
-    all_requests = Book_Club.query.filter_by(reviewed=False)
-    requests = []
-    for request in all_requests:
-        requests.append(request)
-    comments = []
-    all_comments = Book_Club_Comment.query.filter_by(reviewed=False)
-    for comment in all_comments:
-        comments.append(comment)
-    num_reviews = len(reviews)
-    num_requests = len(requests)
-    num_comments = len(comments)
-    return render_template('admin/admin_home.html', num_reviews=num_reviews, num_requests=num_requests, num_comments=num_comments)
-
-@app.route('/admin/admin_reviews')
-def admin_reviews():
-    """Allows an admin user to approve or deny reviews."""
-    reviews = []
-    admin_reviews = Book_Review.query.filter_by(reviewed=False)
-    for review in admin_reviews:
-        reviews.append(review)
-    return render_template('admin/admin.html', reviews=reviews)
-
-@app.route('/admin/admin_reviews/<int:request_id>/approved')
-def review_approve(request_id):
-    """Approves a user's requested change"""
-    approve(Book_Review, request_id)
-    return redirect('/admin/admin_reviews')
-
-@app.route('/admin/<int:request_id>/denied')
-def admin_denied(request, request_id):
-    """Denies a user's requested change"""
-
-@app.route('/admin/admin_club_comments')
-def admin_club_comments():
-    """Allows an admin user to approve or deny club comments."""
-    comments = []
-    admin_comments = Book_Club_Comment.query.filter_by(reviewed=False)
-    for comment in admin_comments:
-        comments.append(comment)
-    return render_template('admin/admin.html', comments=comments)
-
-@app.route('/admin/admin_club_comments/<int:request_id>/approved')
-def comment_approve(request_id):
-    """Approves a user's requested change"""
-    approve(Book_Club_Comment, request_id)
-    return redirect('/admin/admin_club_comments')
-
-@app.route('/admin/admin_club_requests')
-def admin_club_requests():
-    """Allows an admin user to approve or deny new clubs."""
-    clubs = []
-    admin_clubs = Book_Club.query.filter_by(reviewed=False)
-    for club in admin_clubs:
-        clubs.append(club)
-    return render_template('admin/admin.html', clubs=clubs)
-
-@app.route('/admin/admin_club_requests/<int:request_id>/approved')
-def club_approve(request_id):
-    """Approves a user's requested change"""
-    approve(Book_Club, request_id)
-    return redirect('/admin/admin_club_requests')
-
-@app.route('/admin/admin_user_updates')
 def admin_user_updates():
     """Allows an admin user to reset passwords for users, remove users, and update user data."""
     users = []

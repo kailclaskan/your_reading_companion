@@ -4,24 +4,44 @@
     <div class="top">
         <h3>Top Books</h3>
         <div class='container' id='top_books'>
-            <div class="row">
-                {% for result in results %}
-                    <div class="card col-2 my-1 mx-auto">
-                        <a href="/books/check/{{result[0]['volumeInfo']['title'] | urlencode}}">
-                            <img src="{{result[0]['volumeInfo']['imageLinks']['thumbnail']}}" 
-                                alt="{{result[0]['volumeInfo']['title']}}" 
-                                class="card-img-top bookcover">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title">{{result[0]['volumeInfo']['title']}}</h5>
+            {% if books %}
+                {% for book in books %}
+                    <div class="row my-2 align-items-center">
+                        <div class="col-1"></div>
+                        <div class="col-2"><img src="{{book.image}}" alt="{{book.title}}" class="img-fluid rounded w-75"></div>
+                        <div class="col-6">
+                            <div class="row">
+                                <h3>{{book.title.title()}}</h3>
+                            </div>
+                            <div class="row">
+                                <h5>{{book.author.author_name}}</h5>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <a href="/books/{{book.id}}" class="btn btn-secondary">View Details</a>
                         </div>
                     </div>
-            {% endfor %}
-            </div>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
     <div class="top">
         <h4>Current Forum Posts</h4>
+        {% if clubs %}
+            {% for club in clubs %}
+                <div class="container text-center">
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col-2">
+                            <img src="{{club.book.image}}" alt="{{club.book.title}}">
+                        </div>
+                        <div class="col-4"><a href="/bookclub/{{club.id}}" class="nav-link text-secondary">{{club.discussion_title}}</a></div>
+                        <div class="col-2">{{club.user.username}}</div>
+                        <div class="col-2"></div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>  
 {% endblock %}
 {% block scripts %}

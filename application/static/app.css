@@ -6,7 +6,7 @@ body{
     margin: 1% auto;
 }
 #book_cover{
-    width: 25%;
+    width: 10%;
     height: auto;
     margin: 10px auto;
 }
@@ -26,4 +26,8 @@ body{
 .removefromlibrary{
     background-color: firebrick;
     color: blanchedalmond;
+}
+
+#book-review{
+    text-indent: 50px;
 }

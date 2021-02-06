@@ -5,8 +5,8 @@
         <div class="row mx-auto">
             <div class="container">
                 <div class="row">
-                    <img src="{{book.image}}" alt="{{book.title}}" id="book_cover" class="bookcover">
-                    <h3 class="text-center" id="title">{{book.title}}</h3>
+                    <img src="{{book.image}}" alt="{{book.title}}" id="book_cover" class="img-fluid rounded w-25">
+                    <h3 class="text-center" id="title">{{book.title.title()}}</h3>
                     <h4 class="text-center" id="author">{{book.author.author_name}}</h4>
                     <div id="desc_para">
                         <p class="text-left" id="description">{{book.description}}</p>
@@ -14,78 +14,72 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center">
-            <div class="col-3">
+        <div class="row text-center">
+            <div class="col-4">
+                {% if g.user %}
                 <a href="/users/{{g.user.id}}/library/check/{{book.title}}" class="btn btn-primary my-2">Add to library</a>
+                {% endif %}
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 <a href="/books/{{book.id}}/add-review" class="btn btn-success my-2">Write a review</a>
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 <a href="/bookclub/{{book.id}}/post" class="btn btn-info my-2">Create a club</a>
             </div>
         </div>
     </div>
     {% if reviews %}
-        <div class="container mt-3">
-            <div class="row">
-                <div class="col-2">
-                    <h5>Rating</h5>
-                </div>
-                <div class="col-2">
-                    <h5>Review Title</h5>
-                </div>
-                <div class="col-6">
-                    <p>Review</p>
-                </div>
-            </div>
-        </div>
         {% for review in reviews %}
-            <div class="container mt-3">
-                <div class="row">
-                    <div class="col-2">
-                        <h5>{{review.rating}}</h5>
+            <div class="container mt-3" id="review-info">
+                <div class="row text-center">
+                    <div class="col-3">
+                        <h5>{{review.review_date}}</h5>
                     </div>
-                    <div class="col-2">
+                    <div class="col-3 text-center">
                         <h5>{{review.title}}</h5>
                     </div>
-                    <div class="col-6">
-                        <p>{{review.review}}</p>
+                    <div class="col-3 text-center">
+                        <p>{{review.user.username}}</p>
+                    </div>
+                    <div class="col-3 text-center">
+                        <p>{{review.rating}}/10</p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-4">
-                        <h6>{{g.user.username}}</h6>
-                    </div>
-                    <div class="col-4">
-                        <p>{{review.review_date}}</p>
+                    <div class="col-12">
+                        <p id="book-review">{{review.review}}</p>
                     </div>
                 </div>
+                {% if review.user_id == g.user.id or g.user.role == 'admin' %}
+                <div class="row">
+                    <div class="col-11"></div>
+                    <div class="col-1">
+                        <a href="/books/{{book.id}}/remove/{{review.id}}" class="btn btn-danger">Remove</a>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         {% endfor %}
     {% endif %}
     {% if clubs %}
-        <div class="container mt-3">
-            <div class="row">
-                <div class="col-2">
-                    <h5>Club Title</h5>
-                </div>
-                <div class="col-2">
-                    <h5>Last Activity</h5>
-                </div>
-            </div>
-        </div>
         {% for club in clubs %}
-            <div class="container mt-3">
+            <div class="container mt-3" id="club-info">
                 <div class="row">
-                    <div class="col-2">
-                        <h5>{{club.discussion_title}}</h5>
+                    <div class="col-5">
+                        <a href="/bookclub/{{club.id}}" class="nav-link text-dark"><h5>{{club.discussion_title}}</h5></a>
                     </div>
-                    <div class="col-2">
+                    <div class="col-4 text-center">
+                        <h6>{{club.user.username}}</h6>
+                    </div>
+                    <div class="col-3 text-end">
                         <h5>{{club.discussion_posted_date}}</h5>
                     </div>
                 </div>
             </div>
         {% endfor %}
     {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/app.js"></script>
 {% endblock %}

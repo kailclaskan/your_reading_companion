@@ -6,7 +6,7 @@ async function search_book(searchterm){
     username = $("#user").text();
     res = await axios.get(`/users/search/${username}`);
     $user = res.data;
-    $row = $("#top_book_row")
+    $row = $("#top_book_row");
     $row.empty();
     for(let point in data){
         img = data[point]['volumeInfo']['imageLinks']['thumbnail'];
@@ -59,6 +59,7 @@ function open_comment(e){
     $("#reply").addClass("disabled");
     $form.removeClass("invisible");
 }
+
 function book_search(e){
     e.preventDefault();
     $search_term = $("#search_bar").val();
@@ -76,4 +77,3 @@ function book_validate(e){
 $('#search').on("click", book_search);
 $("#validate").on("click", book_validate);
 $("#reply").on("click", open_comment);
-$("#add-comment").on("click", add_comment)
