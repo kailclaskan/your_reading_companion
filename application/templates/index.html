@@ -29,15 +29,29 @@
         <h4>Current Forum Posts</h4>
         {% if clubs %}
             {% for club in clubs %}
-                <div class="container text-center">
+                <div class="container text-center my-2">
                     <div class="row">
-                        <div class="col-2"></div>
+                        <div class="col-1"></div>
                         <div class="col-2">
-                            <img src="{{club.book.image}}" alt="{{club.book.title}}">
+                            <a href="/bookclub/{{club.id}}"><img src="{{club.book.image}}" alt="{{club.book.title}}" class="img-fluid rounded w-75"></a>
                         </div>
-                        <div class="col-4"><a href="/bookclub/{{club.id}}" class="nav-link text-secondary">{{club.discussion_title}}</a></div>
-                        <div class="col-2">{{club.user.username}}</div>
-                        <div class="col-2"></div>
+                        <div class="col-6">
+                            <div class="row">
+                                <h6>Post title</h6>
+                            </div>
+                            <div class="row">
+                                <h3><a href="/bookclub/{{club.id}}" class="nav-link text-secondary">{{club.discussion_title}}</a></h3>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="row">
+                                <h6>Post author</h6>
+                            </div>
+                            <div class="row text-center">
+                                <h5>{{club.user.username}}</h5>
+                            </div>
+                        </div>
+                        <div class="col-1"></div>
                     </div>
                 </div>
             {% endfor %}

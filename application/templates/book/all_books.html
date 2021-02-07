@@ -20,8 +20,12 @@
             </div>
         </div>     
     </form>
+    <div class="container">
+        <div class="row" id="top_book_row"></div>
+    </div>
+    <hr>
     <div class='container' id='top_books'>
-        <div class="row my-2" id="top_book_row"></div>
+        <h3 class="text-center mb-5">Books in Library</h3>
         {% if books %}
             {% for book in books %}
                 <div class="row my-2">
@@ -40,6 +44,14 @@
                 </div>
             {% endfor %}
         {% endif %}
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-10"></div>
+            <div class="col-2">
+                <a href="/books/all" class="btn btn-secondary mb-3">List All Books</a>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block scripts %}

@@ -1,8 +1,7 @@
-from flask.app import Flask
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, validators
-from wtforms.fields.core import DateTimeField, SelectField
-from wtforms.validators import DataRequired, Email, Length, EqualTo
+from wtforms.fields.core import SelectField
+from wtforms.validators import DataRequired, Email, Length
 
 class UserSignupForm(FlaskForm):
     """Form for users to signup."""
@@ -44,8 +43,3 @@ class SearchForm(FlaskForm):
     """The form to search for a book."""
     search = StringField('Search by Title or Author')
     genre = SelectField('Select Genre to Search by')
-
-class EditForm(FlaskForm):
-    """The form that is sent back to a user who needs to update their review/comment/post."""
-    title = StringField('Edit', validators=[DataRequired()])
-    body = StringField('Edit', validators=[DataRequired()])

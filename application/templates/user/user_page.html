@@ -1,68 +1,101 @@
 {% extends 'base.html' %}
 {% block title %}{{g.user.username}}'s Library{% endblock %}
 {% block content %}
-    <h3>{{g.user.username}} Details</h3>
-    <h4>Name:</h4>
-    <h5>{{g.user.first_name}} {{g.user.last_name}}</h5>
-    <h4>Email:</h4>
-    <h5>{{g.user.email}}</h5>
-    <h4>Role:</h4>
-    <h5>{{g.user.role}}</h5>
+    <div class="container text-center my-2">
+        <div class="row">
+            <h3>{{g.user.username}}'s Details</h3>
+        </div>
+        <div class="row">
+            <div class="row">
+                <h4>Name:</h4>
+            </div>
+            <div class="row">
+                <h5>{{g.user.first_name}} {{g.user.last_name}}</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row">
+                <h4>Email:</h4>
+            </div>
+            <div class="row">
+                <h5>{{g.user.email}}</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row">
+                <h4>Role:</h4>
+            </div>
+            <div class="row">
+                <h5>{{g.user.role}}</h5>
+            </div>
+        </div>
+    </div>
+    <hr>
     <div>
-        <h3>Library</h3>
+        <h3 class="text-center">Library</h3>
             {% if books %}
                 {% for book in books %}
                     <div class="container mw-100 mb-3">
                         <div class="row">
                             <div class="col-1 pl-2">
                                 <a href="/books/{{book.id}}">
-                                    <img src="{{book.image}}" alt="{{book.title}}" class="card-img-top bookcover">
+                                    <img src="{{book.image}}" alt="{{book.title}}" class="bookcover">
                                 </a>
                             </div>
-                            <div class="col-1">
-                                <h5>{{book.title}}</h5>
+                            <div class="col-3">
+                                <div class="row">
+                                    <h5>{{book.title}}</h5>
+                                </div>
+                                <div class="row">
+                                    <p>Written By</p>
+                                </div>
+                                <div class="row">
+                                    <h6>{{book.author.author_name}}</h6>
+                                </div>
                             </div>
-                            <div class="col-1">
-                                <h6>{{book.author.author_name}}</h6>
-                            </div>
-                            <div class="col-8">
+                            <div class="col-7">
                                 <p>{{book.description}}</p>
                             </div>
                             <div class="col-1">
-                                <a href="/books/{{book.id}}/add-review" class="btn addreview my-1">Add Review</a>
-                                <a href="/users/{{g.user.id}}/library/remove/{{book.id}}" class="btn removefromlibrary my-1">Remove</a>
+                                <a href="/books/{{book.id}}/add-review" class="btn btn-success my-1">Add Review</a>
+                                <a href="/users/{{g.user.id}}/library/remove/{{book.id}}" class="btn btn-danger my-1">Remove</a>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             {% endif %}
-        <h3>Reviews</h3>
+        <h3 class="text-center">Reviews</h3>
             {% if reviews %}
                 {% for review in reviews %}
                     <div class="container mw-100 mb-3">
                         <div class="row">
                             <div class="col-1 pl-2">
                                 <a href="/books/{{review.book.id}}">
-                                    <img src="{{review.book.image}}" alt="{{review.book.title}}" class="card-img-top bookcover">
+                                    <img src="{{review.book.image}}" alt="{{review.book.title}}" class="bookcover">
                                 </a>
                             </div>
-                            <div class="col-1">
-                                <h5>{{review.title}}</h5>
+                            <div class="col-3">
+                                <div class="row">
+                                    <h5>{{review.title}}</h5>
+                                </div>
+                                <div class="row">
+                                    <p>Review Written By</p>
+                                </div>
+                                <div class="row">
+                                    <h6>{{review.user.username}}</h6>
+                                </div>
                             </div>
-                            <div class="col-1">
-                                <h6>{{review.user.username}}</h6>
-                            </div>
-                            <div class="col-8">
+                            <div class="col-7">
                                 <p>{{review.review}}</p>
                             </div>
-                            <!-- <div class="col-1">
-                                <a href="/books/{{review.user.id}}/remove/{{review.id}}" class="btn removefromlibrary my-1">Remove</a>
-                            </div> -->
+                            <div class="col-1">
+                                <a href="/books/{{review.book.id}}/remove/{{review.id}}" class="btn btn-danger my-1">Remove</a>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
             {% endif %}
-        <h3>Book Clubs</h3>
+        <h3 class="text-center">Book Clubs</h3>
         {% if clubs %}
             {% for club in clubs %}
                 <div class="container mw-100 mb-3">
@@ -72,17 +105,22 @@
                                 <img src="{{club.book.image}}" alt="{{club.book.title}}" class="card-img-top bookcover">
                             </a>
                         </div>
-                        <div class="col-1">
-                            <h5>{{club.discussion_title}}</h5>
+                        <div class="col-3">
+                            <div class="row">
+                                <h5>{{club.discussion_title}}</h5>
+                            </div>
+                            <div class="row">
+                                <p>Club created By</p>
+                            </div>
+                            <div class="row">
+                                <h6>{{club.user.username}}</h6>
+                            </div>
                         </div>
-                        <div class="col-1">
-                            <h6>{{club.user.username}}</h6>
-                        </div>
-                        <div class="col-8">
+                        <div class="col-7">
                             <p>{{club.discussion_body}}</p>
                         </div>
                         <div class="col-1">
-                            <a href="/bookclub/{{club.id}}/remove" class="btn removefromlibrary my-1">Remove</a>
+                            <a href="/bookclub/{{club.id}}/remove" class="btn btn-danger my-1">Remove</a>
                         </div>
                     </div>
                 </div>

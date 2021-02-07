@@ -1,7 +1,5 @@
 """Models for Your Reading Companion"""
-from enum import unique
-from sqlalchemy.orm import relation, relationship
-from sqlalchemy.sql.operators import nullslast_op
+from sqlalchemy.orm import relationship
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date

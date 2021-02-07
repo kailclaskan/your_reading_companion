@@ -19,7 +19,9 @@
             <div class="row">
                 <div class="col-10"></div>
                 <div class="col-1">
-                    <p><a href="" class="nav-link text-right text-secondary" id="reply">reply</a></p>
+                    {% if g.user %}
+                        <p><a href="" class="nav-link text-right text-secondary" id="reply">reply</a></p>
+                    {% endif %}
                 </div>                
                 <div class="col-1">
                     {% if club.user_id == g.user.id or g.user.role == 'admin' %}
@@ -39,16 +41,24 @@
                         {{ field(placeholder=field.label.text, class="form-group col-4 offset-4 my-2 self-align-center")}}
                     </div>
                 {% endfor %}
-                <button class="btn btn-lg btn-success mt-3">Submit</button>
+                <button class="btn btn-lg btn-success my-3">Submit</button>
         </div>
     </div>
         {% if comments %} 
             {% for comment in comments %}
                 <div class="container" id="{{comment.id}}">   
                     <div class="row">
-                        <div class="col-2">
+                        {% if comment.user_id == comment.club.user_id %}
+                        <div class="col-6"></div>
+                        <div class="col-4 bg-secondary text-light rounded">
                             <p>{{comment.comment}}</p>
                         </div>
+                        <div class="col-2"></div>
+                        {% else %}
+                        <div class="col-4 bg-primary rounded">
+                            <p>{{comment.comment}}</p>
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="row">
                         <div class="col-9"></div>

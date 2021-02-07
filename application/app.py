@@ -4,13 +4,12 @@ import urllib
 
 from flask import Flask, render_template, redirect, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 
 from models import db, connect_db, Book, Author, User, User_Library, Book_Club, Book_Club_Comment, Book_Review
 from forms import PostForm, CommentForm, SearchForm, ReviewForm
 from terrible_secret import secret_key
-from genres import genres
-from functions import CURR_USER_KEY, check, add_user, add_post, library_check, load_top_20, do_logout, sign_in, library_check
+from functions import CURR_USER_KEY, check, add_user, add_post, library_check, do_logout, sign_in, library_check
 
 
 
@@ -33,7 +32,7 @@ connect_db(app)
 ######################################################################
 @app.before_request
 def add_user_to_g():
-    """If logged in add current user to the global g"""
+    """If logged in add current user to the global g. This is mostly from the course."""
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -42,6 +41,7 @@ def add_user_to_g():
 
 @app.template_filter('urlencode')
 def url_encode(string):
+    """This is from a session with my Mentor."""
     return urllib.parse.quote_plus(string.encode('utf-8'))
         
 @app.route('/')
@@ -108,11 +108,10 @@ def search_user(username):
 ########################################################################
 @app.route('/books', methods=["GET", "POST"])
 def books_home():
-    """This loads the search criteria for finding books."""
+    """This loads the search criteria for finding books if a user is logged in."""
     if g.user:
         books = Book.query.all()
         form = SearchForm()
-        form.genre.choices = [genre for genre in genres]
         return render_template('book/all_books.html', form=form, books=books)
     else:
         flash("Must be logged in to view that page.", "warning")
@@ -166,6 +165,12 @@ def remove_review(book_id, review_id):
     db.session.commit()
     return redirect(f'/books/{book_id}')
 
+@app.route('/books/all')
+def list_all_books():
+    """Lists all books in the Database"""
+    books = Book.query.order_by(asc(Book.title)).all()
+    return render_template("book/list_db_books.html", books=books)
+
 ########################################################################
 ###########################Club Related#################################
 ########################################################################
@@ -208,7 +213,6 @@ def bookclub(post_id):
     if form.validate_on_submit():
         comment = form.comment.data
         Book_Club_Comment.add_comment(comment, post_id, g.user.id)
-
         db.session.commit()
         return redirect(f'/bookclub/{post_id}')
     else:

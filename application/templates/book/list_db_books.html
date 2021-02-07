@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Your Reading Companion Current Library{% endblock %}
+{% block content %}
+<div class="contaier">
+    <h3 class="text-center my-3">All Books in the Your Reading Companion Library</h3>
+    <div class="row">
+        {% for book in books %}
+            <div class="col-2 text-center">
+                <div class="row">
+                    <img src="{{book.image}}" alt="{{book.title}}" class="img-fluid rounded w-50 mx-auto">
+                </div>
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-8">
+                        <h4>{{book.title}}</h4>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+
+{% endblock %}

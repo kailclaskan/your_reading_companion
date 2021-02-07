@@ -1,15 +1,12 @@
-import os
 import requests
 import urllib
 
-from flask import Flask, render_template, redirect, request, flash, session, g
-from flask_debugtoolbar import DebugToolbarExtension
+from flask import render_template, redirect, flash, session, g
 from sqlalchemy.exc import IntegrityError
 
-from models import db, connect_db, Book, Author, User, User_Library, Author_Work, Book_Club, Book_Club_Comment, Book_Review
-from forms import UserSignupForm, UserSignInForm, PostForm, CommentForm, SearchForm, ReviewForm
-from terrible_secret import secret_key, nyt_api
-from genres import genres
+from models import db, Book, User, User_Library, Book_Club
+from forms import UserSignupForm, UserSignInForm
+from terrible_secret import nyt_api
 
 CURR_USER_KEY = 'curr_user'
 
@@ -54,9 +51,6 @@ def add_to_club(user_id, book_id, post_title, post_body):
             discussion_title=post_title,
             discussion_body=post_body
         )
-
-def add_review(book_id):
-    """Adds a review to a book."""
 
 def add_to_user_library(user_id, book_id):
     """Adds a book to the users library database."""
@@ -110,13 +104,11 @@ def check(book_title):
         return redirect(f'/books/{book.id}')
 
 def do_login(user):
-    """User logs in."""
-    
+    """User logs in. This is from the course."""
     session[CURR_USER_KEY] = user.id
 
 def do_logout():
-    """User logout"""
-
+    """User logout this is mostly from the course."""
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
         flash("Have a nice day!", "secondary")
@@ -161,24 +153,8 @@ def library_check(user_id, title):
         flash("Book added to your library", "success")
         return redirect('/books')
 
-def load_top_20():
-    """
-        Loads the top 20 books according to NYT then filters them through the
-        google books api to get the details.
-    """
-    results = []
-    top_rated = requests.get(f'https://api.nytimes.com/svc/books/v3/lists/best-sellers.json?api-key={nyt_api}')
-    books = top_rated.json().get('results', [])
-    for book in books:
-        title = book['title']
-        title = filter_word(title)
-        resp = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={title}')
-        result = resp.json().get('items', [])
-        results.append(result)
-    return results
-
 def sign_in():
-    """Signs a user in to a page."""
+    """Signs a user in to a page. This is mostly from the course."""
     form = UserSignInForm()
     if form.validate_on_submit():
         user = User.authenticate(form.username.data,
