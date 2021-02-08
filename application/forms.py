@@ -18,6 +18,7 @@ class UserSignupForm(FlaskForm):
         validators=[DataRequired(), Length(min=8)])
     first_name = StringField('User First Name', validators=[DataRequired()])
     last_name = StringField('User Last Name', validators=[DataRequired()])
+    date_of_birth = StringField('Your Date of Birth', validators=[DataRequired()])
 
 class UserSignInForm(FlaskForm):
     """Form to login to the site."""
@@ -43,3 +44,20 @@ class SearchForm(FlaskForm):
     """The form to search for a book."""
     search = StringField('Search by Title or Author')
     genre = SelectField('Select Genre to Search by')
+
+class ForgotForm(FlaskForm):
+    """This form will allow the user to input their email and DOB to reset password."""
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email Address', validators=[DataRequired(), Email()])
+    dob = StringField('Date of Birth', validators=[DataRequired()])
+
+class ResetForm(FlaskForm):
+    password = PasswordField(
+        'Password', 
+        validators=[
+            DataRequired(), 
+            Length(min=8), 
+            validators.EqualTo('password_verifier', 'Passwords must match.')])
+    password_verifier = PasswordField(
+        'Verify Password', 
+        validators=[DataRequired(), Length(min=8)])

@@ -4,10 +4,11 @@ import urllib
 
 from flask import Flask, render_template, redirect, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_bcrypt import Bcrypt
 from sqlalchemy import desc, asc
 
 from models import db, connect_db, Book, Author, User, User_Library, Book_Club, Book_Club_Comment, Book_Review
-from forms import PostForm, CommentForm, SearchForm, ReviewForm
+from forms import PostForm, CommentForm, SearchForm, ReviewForm, ForgotForm, ResetForm
 from terrible_secret import secret_key
 from functions import CURR_USER_KEY, check, add_user, add_post, library_check, do_logout, sign_in, library_check
 
@@ -24,6 +25,7 @@ app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secret_key)
 toolbar = DebugToolbarExtension(app)
+bcrypt = Bcrypt()
 
 connect_db(app)
 
@@ -102,6 +104,38 @@ def search_user(username):
     user = User.query.filter_by(username=username).first()
     id = f'{user.id}'
     return id
+
+@app.route('/users/forgot', methods=['GET', 'POST'])
+def forgot_password():
+    """User will push the Forgot Password button and be redirected to enter email and verify their DOB."""
+    form = ForgotForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        dob = form.dob.data
+        user = User.forgot(username, email, dob)
+
+        if user:
+            return redirect(f"/users/{user.id}/reset")
+        else:
+            flash("Sorry that information is not correct.", "warning")
+            return redirect('/users/signup')
+    else:
+        return render_template ("user/forgot.html", form=form)
+
+@app.route('/users/<int:user_id>/reset', methods=['GET', 'POST'])
+def reset_password(user_id):
+    """Finds the user and updates their password."""
+    user = User.query.filter_by(id=user_id).first()
+    form = ResetForm()
+    if form.validate_on_submit():
+        password = form.password.data
+        secure_password = bcrypt.generate_password_hash(password, 16).decode('UTF-8')
+        user.password = secure_password
+        db.session.commit()
+        return redirect(f"/users/signin")
+    else:
+        return render_template("user/reset.html", form=form, user=user)
 
 ########################################################################
 ###########################Book Related#################################

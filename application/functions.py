@@ -6,7 +6,6 @@ from sqlalchemy.exc import IntegrityError
 
 from models import db, Book, User, User_Library, Book_Club
 from forms import UserSignupForm, UserSignInForm
-from terrible_secret import nyt_api
 
 CURR_USER_KEY = 'curr_user'
 
@@ -60,7 +59,7 @@ def add_to_user_library(user_id, book_id):
     )
 
 def add_user():
-    """Adds a user to the database."""
+    """Adds a user to the database. Took this from the course."""
     form = UserSignupForm()
     if form.validate_on_submit():
         try:
@@ -69,7 +68,8 @@ def add_user():
                 password=form.password.data,
                 email=form.email.data,
                 first_name=form.first_name.data,
-                last_name=form.last_name.data
+                last_name=form.last_name.data,
+                dob=form.date_of_birth.data
             )
             db.session.commit()
         except IntegrityError:

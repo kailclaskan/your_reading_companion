@@ -154,6 +154,10 @@ class User(db.Model):
         db.Text,
         nullable=False
     )
+    dob = db.Column(
+        db.Text,
+        nullable=False
+    )
     role = db.Column(
         db.Text,
         nullable=False,
@@ -166,16 +170,18 @@ class User(db.Model):
     review = relationship("Book_Review", back_populates="user")
 
     @classmethod
-    def signup(cls, username, email, password, first_name, last_name):
+    def signup(cls, username, email, password, first_name, last_name, dob):
         """Adds a user to the database."""
         secure_password = bcrypt.generate_password_hash(password, 16).decode('UTF-8')
+        secure_dob = bcrypt.generate_password_hash(dob, 14).decode('utf-8')
 
         user = User(
             username=username,
             email=email,
             password=secure_password,
             first_name=first_name,
-            last_name=last_name
+            last_name=last_name,
+            dob=secure_dob
         )
 
         db.session.add(user)
@@ -192,6 +198,16 @@ class User(db.Model):
                 return user
             
         return user
+
+    @classmethod
+    def forgot(cls, username, email, dob):
+        """Checks the user's username, email and dob in case they forget the password to their account."""
+        user = cls.query.filter_by(username=username, email=email).first()
+
+        if user:
+            correct_birth = bcrypt.check_password_hash(user.dob, dob)
+            if correct_birth:
+                return user
 
 class User_Library(db.Model):
     """The database to track a users library."""

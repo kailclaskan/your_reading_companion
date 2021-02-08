@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Reset Password{% endblock %}
+{% block content %}
+<div class="container-fluid text-center">
+    <h2>Reset {{user.username}}'s Password</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        {% for field in form if field.widget.input_type != 'hidden' %}
+            {% for error in field.errors %}
+                <span class="text-danger">{{error}}</span>
+            {% endfor %}
+            <div class="row">
+                {{ field(placeholder=field.label.text, class="form-group col-4 offset-4 my-2 self-align-center")}}
+            </div>
+        {% endfor %}
+        <button class="btn btn-lg btn-success mt-3">Submit</button>
+    </form>
+</div>
+{% endblock %}
+{% block scripts %}
+
+{% endblock %}
