@@ -9,7 +9,6 @@ from sqlalchemy import desc, asc
 
 from models import db, connect_db, Book, Author, User, User_Library, Book_Club, Book_Club_Comment, Book_Review
 from forms import PostForm, CommentForm, SearchForm, ReviewForm, ForgotForm, ResetForm
-from terrible_secret import secret_key
 from functions import CURR_USER_KEY, check, add_user, add_post, library_check, do_logout, sign_in, library_check
 
 
@@ -23,7 +22,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secret_key)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 toolbar = DebugToolbarExtension(app)
 bcrypt = Bcrypt()
 
