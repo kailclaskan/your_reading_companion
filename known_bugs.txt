@@ -1,5 +1,0 @@
-Bugs:
-
-3. The Home Page takes FOREVER to load. I suspect it has something to do with the way I'm trying to load the books.
-	I pull the books from the NYT Api and then filter them through the google API so I can pull all the book covers.
-	Prior to pulling from google it loaded far faster.
